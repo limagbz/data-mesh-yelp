@@ -1,0 +1,92 @@
+{
+    "name": "DevContainer",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "PYENV_VERSION": "2.3.18",
+            "POETRY_VERSION": "1.5.1",
+            "PYTHON_VERSION": "3.11.3",
+            "KUBECTL_VERSION": "1.27.2",
+            "KUBECTX_VERSION": "0.9.4",
+            "KUBENS_VERSION": "0.9.4"
+        }
+    },
+    "mounts": [
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.oh-my-zsh,target=/home/dev/.oh-my-zsh,type=bind,consistency=cached",
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zshrc,target=/home/dev/.zshrc,type=bind,consistency=cached",
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zprofile,target=/home/dev/.zprofile,type=bind,consistency=cached",
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history,target=/home/dev/.zsh_history,type=bind,consistency=cached",
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bashrc,target=/home/dev/.bashrc,type=bind,consistency=cached",
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.profile,target=/home/dev/.profile,type=bind,consistency=cached",
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/dev/.bash_history,type=bind,consistency=cached",
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind,consistency=default"
+    ],
+    "postStartCommand": "/bin/bash /tmp/scripts/poststart.sh",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "DavidAnson.vscode-markdownlint",
+                "redhat.vscode-yaml",
+                "streetsidesoftware.code-spell-checker",
+                "ms-python.vscode-pylance",
+                "hediet.vscode-drawio",
+                "christian-kohler.path-intellisense",
+                "timonwong.shellcheck",
+                "redhat.ansible",
+                "njpwerner.autodocstring",
+                "bungcip.better-toml",
+                "ms-azuretools.vscode-docker",
+                "ms-kubernetes-tools.vscode-kubernetes-tools",
+                "esbenp.prettier-vscode"
+            ],
+            "settings": {
+                "terminal.integrated.profiles.linux": {
+                    "zsh": {
+                        "path": "/bin/zsh"
+                    }
+                },
+                "files.exclude": {
+                    "**/.vscode/**": true,
+                    "**/__pycache__/**": true,
+                    "**/.ipynb_checkpoints/**": true
+                },
+                "files.watcherExclude": {
+                    "**/.vscode/**": true,
+                    "**/__pycache__/**": true,
+                    "**/.ipynb_checkpoints/**": true
+                },
+                "search.exclude": {
+                    "**/.vscode/**": true,
+                    "**/__pycache__/**": true,
+                    "**/.ipynb_checkpoints/**": true
+                },
+                "editor.rulers": [
+                    79,
+                    110
+                ],
+                "files.trimTrailingWhitespace": true,
+                "markdownlint.config": {
+                    "default": true,
+                    "MD003": {
+                        "style": "atx"
+                    },
+                    "MD007": {
+                        "indent": 4
+                    },
+                    "MD033": {
+                        "allowed_elements": [
+                            "img",
+                            "p"
+                        ]
+                    }
+                },
+                "cSpell.language": "en,pt,pt-BR",
+                "python.venvFolders": [
+                    "~/.cache/pypoetry/virtualenvs"
+                ],
+                "redhat.telemetry.enabled": false,
+                "yaml.format.enable": true
+            }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "data-engineering-project"
+version = "0.1.0"
+description = ""
+authors = ["limagbz"]
+
+[tool.poetry.dependencies]
+python = "^3.11.3"
+
+[tool.poetry.dev-dependencies]
+pre-commit = "3.2.1"
+detect-secrets = "1.4.0"
+checkov = "2.3.267"
+yamllint = "1.32.0"
+black = "23.3.0"
+flake8 = "6.0.0"
+
+[tool.black]
+line-length = 79
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

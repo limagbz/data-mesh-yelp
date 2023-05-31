@@ -1,3 +1,4 @@
+<!-- TODO: Update this document -->
 # Contributing Guide
 
 First of all, thanks to be interested in contributing! If not already, we encourage you to look into our
