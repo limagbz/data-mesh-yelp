@@ -8,20 +8,15 @@
             "PYTHON_VERSION": "3.11.3",
             "KUBECTL_VERSION": "1.27.2",
             "KUBECTX_VERSION": "0.9.4",
-            "KUBENS_VERSION": "0.9.4"
+            "KUBENS_VERSION": "0.9.4",
+            "K9S_VERSION": "0.27.4"
         }
     },
     "mounts": [
-        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.oh-my-zsh,target=/home/dev/.oh-my-zsh,type=bind,consistency=cached",
-        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zshrc,target=/home/dev/.zshrc,type=bind,consistency=cached",
-        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zprofile,target=/home/dev/.zprofile,type=bind,consistency=cached",
-        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history,target=/home/dev/.zsh_history,type=bind,consistency=cached",
-        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bashrc,target=/home/dev/.bashrc,type=bind,consistency=cached",
-        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.profile,target=/home/dev/.profile,type=bind,consistency=cached",
-        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/dev/.bash_history,type=bind,consistency=cached",
         "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind,consistency=default"
     ],
     "postStartCommand": "/bin/bash /tmp/scripts/poststart.sh",
+    "postCreateCommand": "/bin/bash /tmp/scripts/postcreate.sh",
     "customizations": {
         "vscode": {
             "extensions": [
