@@ -1,5 +1,5 @@
+exclude: ^.*helm/.*$  # Exclude Helm folders since they are downloaded from third-party
 repos:
-
   # General Checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
@@ -24,6 +24,7 @@ repos:
     hooks:
       - id: yamllint
         args: [--strict, -c=.yamllint]
+
   # Security Checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0

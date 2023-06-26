@@ -1,0 +1,40 @@
+rbac:
+  create: false
+
+server:
+  enabled: true
+  replicaCount: 1
+  global:
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    evaluation_interval: 1m
+  persistentVolume:
+    enabled: true
+    size: 8Gi
+  service:
+    type: NodePort
+    nodePort: 30100
+  resources: {}
+
+prometheus-node-exporter:
+  enabled: true
+  rbac:
+    create: false
+  prometheus:
+    monitor:
+      enabled: false
+  resources: {}
+
+alertmanager:
+  enabled: true
+  persistence:
+    size: 2Gi
+  resources: {}
+
+kube-state-metrics:
+  enabled: true
+  resources: {}
+
+prometheus-pushgateway:
+  enabled: true
+  resources: {}
