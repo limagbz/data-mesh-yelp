@@ -6,6 +6,7 @@ ARG KUBECTL_VERSION=1.27.2
 ARG KUBECTX_VERSION=0.9.4
 ARG KUBENS_VERSION=0.9.4
 ARG K9S_VERSION=0.27.4
+ARG HELM_VERSION=3.12.0
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Copy custom scripts and set the required permissions
@@ -59,3 +60,7 @@ RUN apt-get install -y build-essential libssl-dev zlib1g-dev libbz2-dev libreadl
 
 # Install Poetry
 RUN unset PYENV_VERSION && pyenv exec pip install poetry==${POETRY_VERSION}
+
+# Install Helm
+RUN curl -fSsL -o /tmp/helm.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz \
+    && cd /tmp && tar -xvzf /tmp/helm.tar.gz linux-amd64/helm && mv linux-amd64/helm /usr/local/bin/
