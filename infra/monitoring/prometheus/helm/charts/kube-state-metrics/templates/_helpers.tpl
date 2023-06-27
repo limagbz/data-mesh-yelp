@@ -104,7 +104,7 @@ labelValueLengthLimit: {{ . }}
 {{- end }}
 {{- end -}}
 
-{{/* 
+{{/*
 Formats imagePullSecrets. Input is (dict "Values" .Values "imagePullSecrets" .{specific imagePullSecrets})
 */}}
 {{- define "kube-state-metrics.imagePullSecrets" -}}

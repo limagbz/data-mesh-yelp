@@ -1,0 +1,34 @@
+# TODO:
+secrets: {}
+tenant:
+  name: minio-data-tenant
+  pools:
+    - servers: 3
+      volumesPerServer: 2
+      size: 10Gi
+      storageClassName: hd-hostpath
+      annotations: {}
+
+  configuration:
+    name: minio-admin-user
+  env:
+    - name: MINIO_PROMETHEUS_AUTH_TYPE
+      value: public
+    - name: MINIO_PROMETHEUS_URL
+      value: http://prometheus-server.monitoring.svc.cluster.local
+    - name: MINIO_PROMETHEUS_JOB_ID
+      value: kubernetes-pods
+    - name: CONSOLE_SECURE_TLS_REDIRECT  # Note: Avoid redirect for TLS when using NodePort
+      value: "false"
+  features:  # https://github.com/minio/operator/blob/master/docs/tenant_crd.adoc#features
+    bucketDNS: true
+
+  prometheusOperator: false
+  metrics:
+    enabled: true
+    port: 9000
+    protocol: https
+  logging:
+    anonymous: true
+    json: true
+    quiet: true

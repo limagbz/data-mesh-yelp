@@ -1,0 +1,6 @@
+operator:
+  replicaCount: 1
+  resources: {}
+
+console:
+  replicaCount: 1
