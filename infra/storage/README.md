@@ -48,6 +48,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: minio-admin-user
+  namespace: storage
 stringData:
   config.env: |-
     export MINIO_ROOT_USER="<MINIO_USER>"
