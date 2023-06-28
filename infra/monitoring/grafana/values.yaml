@@ -1,0 +1,55 @@
+###############################################################################
+# Resources
+###############################################################################
+
+replicas: 1
+persistence:
+  enabled: true
+  size: 10Gi
+headlessService: false
+createConfigmap: true
+autoscaling:
+  enabled: false
+resources: {}
+
+###############################################################################
+# Security
+###############################################################################
+
+rbac:
+  create: false
+serviceAccount:
+  create: true
+admin:
+  existingSecret: grafana-admin-user-password  # pragma: allowlist secret
+  userKey: admin-user
+  passwordKey: admin-password  # pragma: allowlist secret
+
+
+###############################################################################
+# Networking
+###############################################################################
+
+service:
+  type: NodePort
+  nodePort: 30102
+ingress:
+  enabled: false
+
+###############################################################################
+# Data Sources, Alerts and Dashboards
+###############################################################################
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-server.monitoring.svc.cluster.local
+
+alerting: {}
+notifiers: {}
+dashboardProviders: {}
+dashboards: {}
+dashboardsConfigMaps: {}

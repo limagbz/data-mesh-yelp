@@ -20,3 +20,28 @@ do the following (from the root folder of the project):
 ```shell
 helm install -f infra/monitoring/prometheus/values.yaml prometheus infra/monitoring/prometheus/helm -n monitoring
 ```
+
+## 2. Deploy Grafana  (v6.57.2)
+
+Grafana is deployed by using the official Grafana Helm Chart. You can find more information about the chart
+on [Deploy Grafana on Kubernetes](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/).
+
+To deploy the chart contained in this repo, first you need to create the admin user and password by
+configuring a secret as described below, replacing the values  `<GRAFANA_USER>` and `<GRAFANA_PASSWORD>`
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+    name: grafana-admin-user-password
+  namespace: monitoring
+stringData:
+  admin-user: <GRAFANA_USER>
+  admin-password: <GRAFANA_PASSWORD>
+```
+
+After that, just deploy Grafana by running the helm command below:
+
+```shell
+helm install -f infra/monitoring/grafana/values.yaml grafana infra/monitoring/grafana/helm -n monitoring
+```
