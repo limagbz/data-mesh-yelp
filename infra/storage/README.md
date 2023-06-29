@@ -1,7 +1,8 @@
 # Storage
 
-This namespace contains all the required storage resources for the project to work, this includes databases,
-filesystems and so on.
+This namespace contains all the required storage resources for the project to work, this includes mainly
+databases, object storages (e.g. minio) and related resources. For full information about all the resources
+on the cluster see [README](../README.md).
 
 ## Step-by-Step Deployment
 
@@ -73,7 +74,7 @@ kubectl patch svc minio-data-tenant-console --type='json' -p '[{"op":"replace","
 ```
 
 > **Note** </br>
-> You can also access the tenant console through the operator console
+> You can also access the tenant console through the operator's console
 
 ## FAQ
 

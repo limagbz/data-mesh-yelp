@@ -1,6 +1,7 @@
 # Monitoring
 
-This namespace contains all the required resources for monitoring the cluster and its resources.
+This namespace contains all the required resources for monitoring the cluster and its resources. For full
+information about all the resources on the cluster see [README](../README.md)
 
 ## Step-by-Step Deployment
 
@@ -21,7 +22,7 @@ do the following (from the root folder of the project):
 helm install -f infra/monitoring/prometheus/values.yaml prometheus infra/monitoring/prometheus/helm -n monitoring
 ```
 
-## 2. Deploy Grafana  (v6.57.2)
+### 2. Deploy Grafana  (v6.57.2)
 
 Grafana is deployed by using the official Grafana Helm Chart. You can find more information about the chart
 on [Deploy Grafana on Kubernetes](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/).
