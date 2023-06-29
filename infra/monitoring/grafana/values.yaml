@@ -48,8 +48,17 @@ datasources:
         type: prometheus
         url: http://prometheus-server.monitoring.svc.cluster.local
 
+dashboards:
+  kube-state-metrics-v2:
+    file: dashboards/kube-state-metrics-v2_rev12.json
+    datasource: Prometheus
+    folder: Kubernetes
+  kubernetes-persistent-volumes:
+    file: dashboards/kubernetes-persistent-volumes_rev2.json
+    datasource: Prometheus
+    folder: Kubernetes
+
 alerting: {}
 notifiers: {}
 dashboardProviders: {}
-dashboards: {}
 dashboardsConfigMaps: {}
