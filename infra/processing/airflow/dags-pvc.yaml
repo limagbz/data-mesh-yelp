@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: airflow-local-dags-pv
+  namespace: processing
+spec:
+  storageClassName: hd-hostpath
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+  local:
+    path: /mnt/hd/k8s-volumes/airflow-dags
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/os
+              operator: In
+              values:
+                - linux
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: airflow-local-dags-pvc
+  namespace: processing
+spec:
+  storageClassName: hd-hostpath
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+  volumeName: airflow-local-dags-pv
