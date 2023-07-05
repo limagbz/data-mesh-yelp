@@ -6,6 +6,8 @@ on the cluster see [README](../README.md).
 
 ## Step-by-Step Deployment
 
+### 0. Deploy Namespace
+
 ```shell
 kubectl apply -f infra/storage/namespace.yaml
 ```

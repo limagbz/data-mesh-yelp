@@ -1,5 +1,6 @@
-rbac:
-  create: false
+##############################################################################################################
+# General
+##############################################################################################################
 
 server:
   enabled: true
@@ -16,6 +17,21 @@ server:
     nodePort: 30100
   resources: {}
 
+prometheus-pushgateway:
+  enabled: true
+  resources: {}
+
+##############################################################################################################
+# Security
+##############################################################################################################
+
+rbac:
+  create: false
+
+##############################################################################################################
+# Scrape, records and Alerts
+##############################################################################################################
+
 prometheus-node-exporter:
   enabled: true
   rbac:
@@ -25,18 +41,14 @@ prometheus-node-exporter:
       enabled: false
   resources: {}
 
-alertmanager:
-  enabled: true
-  persistence:
-    size: 2Gi
-  resources: {}
-
 kube-state-metrics:
   enabled: true
   resources: {}
 
-prometheus-pushgateway:
+alertmanager:
   enabled: true
+  persistence:
+    size: 2Gi
   resources: {}
 
 serverFiles:

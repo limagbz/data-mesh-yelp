@@ -1,5 +1,3 @@
-# TODO:
-secrets: {}
 tenant:
   name: minio-data-tenant
   pools:
@@ -8,7 +6,6 @@ tenant:
       size: 10Gi
       storageClassName: hd-hostpath
       annotations: {}
-
   configuration:
     name: minio-admin-user
   env:
