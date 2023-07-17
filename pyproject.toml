@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "data-engineering-project"
+name = "data-mesh-yelp"
 version = "0.1.0"
 description = ""
 authors = ["limagbz"]

@@ -6,7 +6,7 @@ contribute with this project.
 
 1. [Style Guide](#style-guide)
 1. [Best Practices](#best-practices)
-1. [Sources](#sources)
+1. [References](#references)
 
 ## Style Guide
 
@@ -27,6 +27,9 @@ references for their styleguides:
 
 - **Markdown:** For Markdown we follow [Google's Markdown Style Guide](https://google.github.io/styleguide/docguide/style.html);
 - **Shell Scripts:** We also follow [Google's Shell Style Guide](https://google.github.io/styleguide/shellguide.html);
+- **YAML:** YAML files follow the rules found on [yamlint configuration](.yamllint) and are evaluated
+automatically. See [yamlint: rules](https://yamllint.readthedocs.io/en/stable/rules.html) for description for
+each rule used by the project.
 
 ## Best Practices
 
@@ -36,7 +39,7 @@ Below are some references for best practices from tools, languages and related t
 - [Docker: Dockerfile best practices](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/)
 - [Docker: Security best practices](https://docs.docker.com/develop/security-best-practices/)
 
-## Further Readings
+## References
 
 - [Wrangling Web Contributions: How to Build a CONTRIBUTING.md](https://mozillascience.github.io/working-open-workshop/contributing/)
 - [Awesome Guidelines](https://github.com/Kristories/awesome-guidelines)
