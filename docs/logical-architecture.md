@@ -8,19 +8,23 @@ understand:
 > to the analytical data that the domain serves.
 > ― Zhamak Dehghani
 
-1. [Diagram](#diagram)
+1. [Logical-Diagram](#logical-diagram)
+1. [Product Interaction Map](#product-interaction-map)
 1. [Domains](#domains)
 1. [Operational Interfaces](#operational-interfaces)
 1. [Entities](#entities)
 1. [Analytical Interfaces](#operational-interfaces)
 
-## Diagram
-
-Below is the logical representation used by the project to model the domains, entities and
-operational/analytical interfaces.
+## Logical Diagram
 
 <p align="center">
-<img src="_static/diagrams/logical-architecture.drawio.png" />
+<img src="_static/products/logical-architecture.drawio.png" />
+</p>
+
+## Product Interaction Map
+
+<p align="center">
+<img src="_static/products/product-interaction-map.drawio.png" />
 </p>
 
 ## Domains
@@ -44,11 +48,6 @@ products. Because of that some operational interfaces were omitted. For example,
 besides the "Add a Friend" interface, others like "Accept Friend Request" and/or "Unfriend" are common. For a
 simplified description and since the data will not reflect these kind of operations, these interfaces are not
 presented.
-
-<!-- TODO: See if this still applies in the future -->
-> **Note** </br>
-> Even if described here, some operational interfaces will not be simulated into the entities at first.
-> However this can change as the project evolves.
 
 ## Entities
 
@@ -333,5 +332,5 @@ presented.
 ## Analytical Interfaces (a.k.a Data Products)
 
 <!-- TODO: Add the path to the products folder -->
-For more information about the Analytical interfaces described in the diagram. Refer to their own
-documentation on [products folder]()
+This project creates some data products for each of these domains. For more information about the Analytical
+interfaces described in the diagram. Refer to their own documentation on [products folder]().

@@ -2,7 +2,6 @@
 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
 
-<!-- NEXT: Find a good size for this image on Github -->
 <img src="docs/_static/icons/yelp.svg" align="left" width="70" height="70">
 
 This project aims to design and implement a data mesh architecture by using close to real business data
@@ -23,23 +22,25 @@ to contribute with this project by contacting me with suggestions, tips and ways
 
 ## Logical Architecture
 
+<!-- TODO: Add the path to the products folder -->
 > **Note** </br>
-> Please refer to [Logical Architecture](docs/logical-architecture.md) for details about the diagram.
+> Please refer to [Logical Architecture](docs/logical-architecture.md) for details about the diagram. For
+> information about each product (including their canvas and interaction map) refer to their own
+> documentation on [products folder]().
 
 <p align="center">
-<img src="docs/_static/diagrams/logical-architecture.drawio.png" />
+<img src="docs/_static/products/logical-architecture.drawio.png" />
 </p>
 
 ## Platform Architecture
 
 <p align="center">
-<img src="docs/_static/diagrams/platform-architecture.drawio.png" />
+<img src="docs/_static/architecture/platform-architecture.drawio.png" />
 </p>
 
 ## Setup your local environment
 
-<!-- NEXT: Find a good size for this image on Github -->
-<img src="docs/_static/icons/kubernetes.svg" align="left" width="50" height="50" hspace=10>
+<img src="docs/_static/icons/kubernetes.svg" align="left" width="60" height="69" hspace=10>
 
 In order to deploy the resources a kubernetes cluster is required. How to deploy a local kubernetes cluster
 is out of the scope of this project. This code was tested under a [MicroK8S](https://microk8s.io/) managed
