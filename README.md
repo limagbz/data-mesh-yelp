@@ -34,6 +34,13 @@ to contribute with this project by contacting me with suggestions, tips and ways
 
 ## Platform Architecture
 
+> **Note** </br>
+> This architecture (and the diagram) is heavily based on the tech stacks found
+> [here](https://www.datamesh-architecture.com/#tech-stacks), more precisely this a mix of both
+> [Datamesh Architecture: MinIO and Trino](https://www.datamesh-architecture.com/tech-stacks/minio-trino) and
+> [Datamesh Architecture: dbt and Snowflake](https://www.datamesh-architecture.com/tech-stacks/dbt-snowflake).
+> Changes should occur as the project
+
 <p align="center">
 <img src="docs/_static/architecture/platform-architecture.drawio.png" />
 </p>
