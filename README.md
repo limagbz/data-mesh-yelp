@@ -47,8 +47,6 @@ to contribute with this project by contacting me with suggestions, tips and ways
 
 ## Setup your local environment
 
-<!-- <img src="docs/_static/icons/kubernetes.svg" align="left" width="60" height="69" hspace=10> -->
-
 In order to deploy the resources a kubernetes cluster is required. How to deploy a local kubernetes cluster
 is out of the scope of this project. This code was tested under a [MicroK8S](https://microk8s.io/) managed
 cluster. If this is your choice the following addons were enabled:
