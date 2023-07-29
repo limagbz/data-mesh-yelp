@@ -39,7 +39,7 @@ to contribute with this project by contacting me with suggestions, tips and ways
 > [here](https://www.datamesh-architecture.com/#tech-stacks), more precisely this a mix of both
 > [Datamesh Architecture: MinIO and Trino](https://www.datamesh-architecture.com/tech-stacks/minio-trino) and
 > [Datamesh Architecture: dbt and Snowflake](https://www.datamesh-architecture.com/tech-stacks/dbt-snowflake).
-> Changes should occur as the project
+> Changes should occur as the project.
 
 <p align="center">
 <img src="docs/_static/architecture/platform-architecture.drawio.png" />
@@ -47,7 +47,7 @@ to contribute with this project by contacting me with suggestions, tips and ways
 
 ## Setup your local environment
 
-<img src="docs/_static/icons/kubernetes.svg" align="left" width="60" height="69" hspace=10>
+<!-- <img src="docs/_static/icons/kubernetes.svg" align="left" width="60" height="69" hspace=10> -->
 
 In order to deploy the resources a kubernetes cluster is required. How to deploy a local kubernetes cluster
 is out of the scope of this project. This code was tested under a [MicroK8S](https://microk8s.io/) managed
