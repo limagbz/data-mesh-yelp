@@ -56,7 +56,6 @@ microk8s enable dns
 microk8s enable helm
 microk8s enable helm3
 microk8s enable hostpath-storage
-microk8s enable metrics-server
 ```
 
 > **Note** </br>

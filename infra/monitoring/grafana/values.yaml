@@ -17,14 +17,13 @@ resources: {}
 ###############################################################################
 
 rbac:
-  create: false
+  create: true
 serviceAccount:
   create: true
 admin:
-  existingSecret: grafana-admin-user-password  # pragma: allowlist secret
+  existingSecret: grafana-admin-user-password # pragma: allowlist secret
   userKey: admin-user
-  passwordKey: admin-password  # pragma: allowlist secret
-
+  passwordKey: admin-password # pragma: allowlist secret
 
 ###############################################################################
 # Networking
@@ -32,7 +31,7 @@ admin:
 
 service:
   type: NodePort
-  nodePort: 30102
+  nodePort: 30110
 ingress:
   enabled: false
 
@@ -48,17 +47,40 @@ datasources:
         type: prometheus
         url: http://prometheus-server.monitoring.svc.cluster.local
 
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: default
+        orgId: 1
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
 dashboards:
-  kube-state-metrics-v2:
-    file: dashboards/kube-state-metrics-v2_rev12.json
-    datasource: Prometheus
-    folder: Kubernetes
-  kubernetes-persistent-volumes:
-    file: dashboards/kubernetes-persistent-volumes_rev2.json
-    datasource: Prometheus
-    folder: Kubernetes
+  default:
+    # Ref: https://grafana.com/grafana/dashboards/13332-kube-state-metrics-v2/
+    kube-state-metrics-v2:
+      gnetId: 13332
+      revision: 12
+      datasource: Prometheus
+    # Ref: https://grafana.com/grafana/dashboards/12660-kubernetes-persistent-volumes/
+    kubernetes-persistent-volumes:
+      gnetId: 12660
+      revision: 1
+      datasource: Prometheus
+    # Ref: https://grafana.com/grafana/dashboards/12006-kubernetes-apiserver/
+    kubernetes-apiserver:
+      gnetId: 12006
+      revision: 1
+      datasource: Prometheus
+    # Ref: https://grafana.com/grafana/dashboards/315-kubernetes-cluster-monitoring-via-prometheus/
+    kubernetes-cluster-monitoring:
+      gnetId: 315
+      revision: 3
+      datasource: Prometheus
 
 alerting: {}
 notifiers: {}
-dashboardProviders: {}
 dashboardsConfigMaps: {}
