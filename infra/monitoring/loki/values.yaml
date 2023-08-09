@@ -1,0 +1,115 @@
+# Application Settings
+loki:
+  # NOTE: Loki does not comme with an authentication layer and requires the deployment of an reverse proxy
+  # for the auth_enabled configuration to work as indicated in the docs
+  # https://grafana.com/docs/loki/v2.8.x/operations/authentication/. The authentication will be done by the
+  # gateway deployed in this helm chart
+  auth_enabled: false
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: http-metrics
+    initialDelaySeconds: 30
+    timeoutSeconds: 120
+  commonConfig:
+    replication_factor: 1
+  limits_config:
+    enforce_metric_name: false
+    reject_old_samples: true
+    reject_old_samples_max_age: 168h
+    max_cache_freshness_per_query: 10m
+    split_queries_by_interval: 15m
+  memcached:
+    chunk_cache:
+      enabled: false
+  results_cache:
+    enabled: false
+  storage:
+    type: s3
+
+# NOTE: Loki is deployed in a single binary (or monolithic) mode for this lab purposes, for more intensive
+# deployments other approaches should be useful. See
+# https://grafana.com/docs/loki/v2.8.x/fundamentals/architecture/deployment-modes/ for more information.
+singleBinary:
+  replicas: 1
+  autoscaling:
+    enabled: false
+  persistence:
+    enabled: true
+    enableStatefulSetAutoDeletePVC: true
+    storageClass: hd-hostpath
+    size: 10Gi
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/scheme: http
+    prometheus.io/path: /metrics
+    prometheus.io/port: "3100"
+write:
+  replicas: 0
+read:
+  replicas: 0
+backend:
+  replicas: 0
+
+# Monitoring Features
+monitoring:
+  dashboards:
+    enabled: true
+    namespace: monitoring
+  rules:
+    enabled: true
+    alerting: true
+    namespace: monitoring
+  serviceMonitor:
+    enabled: false
+    metricsInstance:
+      enabled: false
+  selfMonitoring:
+    enabled: false
+  lokiCanary:
+    enabled: false
+
+# Features
+enterprise:
+  enabled: false
+tableManager: # Used for table-based data storages
+  enabled: false
+
+# Security & Access Management
+serviceAccount:
+  create: true
+rbac:
+  pspEnabled: false
+  sccEnabled: false
+
+# Storage
+minio: # TODO: Change this to the projects Minio when deployed
+  enabled: true
+  replicas: 1
+
+# Networking
+ingress:
+  enabled: false
+networkPolicy:
+  enabled: false
+gateway:
+  enabled: true
+  replicas: 1
+  verboseLogging: true
+  autoscaling:
+    enabled: false
+  service:
+    port: 80
+    type: NodePort
+    nodePort: 30200
+    clusterIP: null
+    loadBalancerIP: null
+  ingress:
+    enabled: false
+  basicAuth:
+    enabled: true
+    existingSecret: loki-gateway-auth # pragma: allowlist secret
+
+# Other Configurations
+test:
+  enabled: false
