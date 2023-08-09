@@ -4,7 +4,7 @@ This directory contains all the infrastructure deployed into kubernetes and requ
 Note that each subfolder represents a namespace inside the cluster.
 
 <p align="center">
-<img src="../docs/_static/diagrams/platform-architecture.drawio.png" />
+<img src="../docs/_static/architecture/platform-architecture.drawio.png" />
 </p>
 
 ## Features
