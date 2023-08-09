@@ -1,21 +1,16 @@
-###############################################################################
-# General
-###############################################################################
-
+# Application Settings
 replicas: 1
 persistence:
   enabled: true
   size: 10Gi
+  storageClassName: hd-hostpath
 headlessService: false
 createConfigmap: true
 autoscaling:
   enabled: false
 resources: {}
 
-###############################################################################
-# Security
-###############################################################################
-
+# Security and Access Control Settings
 rbac:
   create: true
 serviceAccount:
@@ -24,21 +19,17 @@ admin:
   existingSecret: grafana-admin-user-password # pragma: allowlist secret
   userKey: admin-user
   passwordKey: admin-password # pragma: allowlist secret
+envFromSecrets:
+  - name: loki-gateway-password
 
-###############################################################################
 # Networking
-###############################################################################
-
 service:
   type: NodePort
   nodePort: 30110
 ingress:
   enabled: false
 
-###############################################################################
-# Data Sources, Alerts and Dashboards
-###############################################################################
-
+# Data Sources, Dashboards & Alerts
 datasources:
   datasources.yaml:
     apiVersion: 1
@@ -46,6 +37,12 @@ datasources:
       - name: Prometheus
         type: prometheus
         url: http://prometheus-server.monitoring.svc.cluster.local
+      - name: Loki
+        type: loki
+        url: http://loki-gateway.monitoring.svc.cluster.local
+        user: meshuser
+        secureJsonData:
+          password: $LOKI_GATEWAY_PASSWORD
 
 dashboardProviders:
   dashboardproviders.yaml:
@@ -80,7 +77,12 @@ dashboards:
       gnetId: 315
       revision: 3
       datasource: Prometheus
+    # Ref: https://grafana.com/grafana/dashboards/15141-kubernetes-service-logs/?tab=revisions
+    loki-kubernetes-logs:
+      gnetId: 15141
+      revision: 1
+      datasource: Loki
+dashboardsConfigMaps: {}
 
 alerting: {}
 notifiers: {}
-dashboardsConfigMaps: {}

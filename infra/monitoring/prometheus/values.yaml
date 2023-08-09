@@ -1,10 +1,8 @@
-##############################################################################################################
-# General
-##############################################################################################################
-
+# Application Settings
 server:
   enabled: true
   replicaCount: 1
+  retention: 15d
   global:
     scrape_interval: 1m
     scrape_timeout: 10s
@@ -17,44 +15,39 @@ server:
     nodePort: 30100
   resources: {}
 
-##############################################################################################################
-# Security
-##############################################################################################################
-
+# Security and Access Management
 rbac:
   create: true
-
 serviceAccounts:
   server:
     create: true
 
-##############################################################################################################
-# Scrape, records and Alerts
-##############################################################################################################
-
+# Prometheus Features
+# Used for applications to push metrics that cannot be scraped
 prometheus-pushgateway:
   enabled: false
   resources: {}
-
+# Exports metrics from Kubernetes Cluster Nodes
 prometheus-node-exporter:
   enabled: true
   rbac:
     create: true
   resources: {}
+# Manage alerts from Metrics.
+alertmanager:
+  enabled: false
 
+# Other Features
+# Used to generate metrics about the state of the objects
 kube-state-metrics:
   enabled: true
   resources: {}
 
-alertmanager:
-  enabled: true
-  service:
-    type: NodePort
-    nodePort: 30101
-  persistence:
-    size: 2Gi
-  resources: {}
-
+# Scraping Configuration
+# Note: Some default scrape settings such as "slow", the ones that requires blackbox exporters and for
+# Prometheus push Gateway were removed because they will not be used in this lab. If you want to understand
+# more what were disabled or are using this for production purposes see the values.yaml file in the `helm`
+# subfolder.
 serverFiles:
   alerting_rules.yml: {} ## Ref: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
   recording_rules.yml: {} ## Ref: https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/
@@ -62,9 +55,6 @@ serverFiles:
     rule_files:
       - /etc/config/recording_rules.yml
       - /etc/config/alerting_rules.yml
-
-    # Note: Some default scrape settings such as 'slow' ones and the ones that require Blackbox Exporter
-    # (not deployed for this lab purpose ) were removed
     scrape_configs:
       # --- Resources Monitoring ---
       # Scrape config for Prometheus Itself
@@ -72,17 +62,6 @@ serverFiles:
         static_configs:
           - targets:
               - localhost:9090
-      # Scrape config for Prometheus Pushgateway
-      - job_name: prometheus-pushgateway
-        honor_labels: true
-        kubernetes_sd_configs:
-          - role: service
-        relabel_configs:
-          - source_labels:
-              [__meta_kubernetes_service_annotation_prometheus_io_probe]
-            action: keep
-            regex: pushgateway
-
       # --- Cluster Monitoring ---
       # Scrape config for State Metrics
       - job_name: kube-state-metrics
@@ -250,7 +229,7 @@ serverFiles:
             regex: (.+)
             target_label: __metrics_path__
             replacement: /api/v1/nodes/$1/proxy/metrics
-      # Scrape config for Kubernetes Nodes CAdivisor
+      # Scrape config for Kubernetes Nodes CAdivisor (monitors resources and performance of Containers)
       - job_name: kubernetes-nodes-cadvisor
         scheme: https
         tls_config:
