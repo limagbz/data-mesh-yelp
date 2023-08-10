@@ -128,6 +128,9 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Custom Rules
 .vscode/settings.json
 secrets.yaml
 .htpasswd
+data/*
