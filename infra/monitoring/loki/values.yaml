@@ -101,7 +101,7 @@ gateway:
   service:
     port: 80
     type: NodePort
-    nodePort: 30200
+    nodePort: 30120
     clusterIP: null
     loadBalancerIP: null
   ingress:
