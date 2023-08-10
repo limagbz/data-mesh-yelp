@@ -1,0 +1,81 @@
+# Application and Resources
+# NOTE: A standalone architecture was used here to minimize resource usage of the cluster. For production
+# environment the usage of replicas or pgpool it is the best approach. Read
+# https://docs.bitnami.com/kubernetes/infrastructure/postgresql/get-started/compare-solutions/ for more
+# information about PostgreSQL High Availability (HA) helm chart
+architecture: standalone
+primary:
+  resources:
+    limits: {}
+    requests:
+      memory: 256Mi
+      cpu: 250m
+  service:
+    type: NodePort
+    ports:
+      postgresql: 5432
+    nodePorts:
+      postgresql: 30200
+  persistence:
+    enabled: true
+    storageClass: hd-hostpath
+    size: 10Gi
+
+# Features
+diagnosticMode:
+  enabled: false
+backup:
+  enabled: false
+metrics:
+  enabled: true
+  service:
+    ports:
+      metrics: 9187
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "{{ .Values.metrics.service.ports.metrics }}"
+  serviceMonitor:
+    enabled: true
+  prometheusRule:
+    enabled: false
+
+# Security and Access Management
+auth:
+  enablePostgresUser: true
+  username: meshuser
+  existingSecret: postgres-secrets # pragma: allowlist secret
+  database: operational
+  secretKeys:
+    adminPasswordKey: admin-password # pragma: allowlist secret
+    userPasswordKey: user-password # pragma: allowlist secret
+    replicationPasswordKey: replication-password # pragma: allowlist secret
+  usePasswordFiles: true
+ldap:
+  enabled: false
+tls:
+  enabled: false
+volumePermissions:
+  enabled: false
+serviceBindings:
+  enabled: false
+serviceAccount:
+  create: true
+rbac:
+  create: true
+
+# Networking
+containerPorts:
+  postgresql: 5432
+networkPolicy:
+  enabled: false
+
+# Audit
+audit:
+  logHostname: false
+  logConnections: false
+  logDisconnections: false
+  pgAuditLog: ""
+  pgAuditLogCatalog: "off"
+  clientMinMessages: error
+  logLinePrefix: ""
+  logTimezone: ""

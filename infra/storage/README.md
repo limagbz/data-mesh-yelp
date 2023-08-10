@@ -1,87 +1,61 @@
 # Storage
 
+1. [Overview](#overview)
+1. [Step-by-Step Deployment](#step-by-step-deployment)
+1. [FAQ](#faq)
+1. [Further Reading](#further-reading)
+
+## Overview
+
 This namespace contains all the required storage resources for the project to work, this includes mainly
-databases, object storages (e.g. minio) and related resources. For full information about all the resources
-on the cluster see [README](../README.md).
+databases (e.g. PostgreSQL), object storages (e.g. minio) and related resources. For full information about
+all the resources on the cluster see [README](../README.md).
 
 ## Step-by-Step Deployment
 
-### 0. Deploy Namespace
+### 1. Create the namespace
+
+All the resources above will be deployed in a single namespace. This can be done by running:
 
 ```shell
 kubectl apply -f infra/storage/namespace.yaml
 ```
 
-### 1. Deploy MinIO Operator (v5.0.5)
+### 2. Deploy PostgreSQL
 
-To deploy Minio we first need to deploy its operator. You can see more about the official operator and how to
-deploy on
-[Deploy Operator With Helm](https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/deploy-operator-helm.html).
-To deploy the operator just do the following (from the root folder of the project):
-
-```shell
-helm install -f infra/storage/minio/values-operator.yaml minio-operator infra/storage/minio/helm/operator -n storage
-```
-
-To be able to access the interface for the operator without ingress (since this project is not supposed to
-run on a production environment) unfortunately there is no straightforward way to do this directly from the
-helm chart values. So, it is necessary to patch the service in order to modify the service from a ClusterIP
-to a NodePort. This can be done by:
-
-```shell
-kubectl patch svc console --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":30200},{"op":"replace","path":"/spec/ports/1/nodePort","value":30201}]' -n storage
-```
-
-> **Note** </br>
-> Note that the command above change add the HTTP port of the operator to 30200 and HTTPS to 30201. If you
-> want, just modify the values of the ports.
-
-### 2. Deploy MinIO Tenant (v5.0.5)
-
-Now we can use the operator do deploy the tenant (with another helm chart). See
-[Deploy a Tenant](https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/deploy-operator-helm.html#deploy-a-tenant) in
-[Deploy Operator With Helm](https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/deploy-operator-helm.html)
-documentation for more information about how to deploy a tenant.
-
-First of all it is required to deploy the root user and password. For this you need to apply a secret in the
-following below, replacing the values `<MINIO_USER>` and `<MINIO_PASSWORD>`:
+PostgreSQL is deployed using the
+[Bitnami Helm Chart](https://artifacthub.io/packages/helm/bitnami/postgresql). Before deploying the database
+you first need to setup the required secrets. This can be done by creating a secret with the template below.
+Replacing the value of `<ADMIN_PASSWORD>` with the password for the `postgres` admin user and the
+`<USER_PASSWORD>` with the password for the user specified in the `auth.username` on the `values.yaml` file.
+Don't forget to apply the secrets with `kubectl apply`:
 
 ```yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: minio-admin-user
+  name: postgres-secrets
   namespace: storage
 stringData:
-  config.env: |-
-    export MINIO_ROOT_USER="<MINIO_USER>"
-    export MINIO_ROOT_PASSWORD="<MINIO_PASSWORD>"
+  admin-password: <ADMIN_PASSWORD>
+  user-password: <USER_PASSWORD>
 ```
 
-> **Note** </br>
-> Don't forget to run `kubectl apply`
-
-Then, you only need to deploy the tenant by running:
+Now you can just deploy the database running the command below:
 
 ```shell
-helm install -f infra/storage/minio/values-tenant.yaml minio-tenant infra/storage/minio/helm/tenant -n storage
+helm install -f infra/storage/postgresql/values.yaml postgresql infra/storage/postgresql/helm -n storage
 ```
-
-As done in the operator part, for non-production purposes we are going to use a node port to expose both
-the tenant console. This can be done by running the following commands:
-
-```shell
-# Console
-kubectl patch svc minio-data-tenant-console --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":30202}]' -n storage
-```
-
-> **Note** </br>
-> You can also access the tenant console through the operator's console
 
 ## FAQ
 
-### How to get Access Token for Minio?
+### 1. How to connect with PostgreSQL
 
-```shell
-SA_TOKEN=$(kubectl -n storage get secret console-sa-secret -o jsonpath="{.data.token}" | base64 --decode) && echo $SA_TOKEN
-```
+Using your preferred tool (e.g. [pgAdmin](https://www.pgadmin.org/), [DBeaver](https://dbeaver.io/),
+postgres-cli) you can use the created credentials for the admin on any database. You can also use the user
+and the database defined in the `auth` section of the `values.yaml` file.
+
+## Further Reading
+
+* [Bitnami: Differences between the PostgreSQL-HA and PostgreSQL Helm charts](https://docs.bitnami.com/kubernetes/infrastructure/postgresql/get-started/compare-solutions/)
+* [PostgreSQL packaged by Bitnami for Kubernetes](https://docs.bitnami.com/kubernetes/infrastructure/postgresql/)
