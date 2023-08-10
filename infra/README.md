@@ -1,15 +1,45 @@
 # Infrastructure
 
-This directory contains all the infrastructure deployed into kubernetes and required for this project.
-Note that each subfolder represents a namespace inside the cluster.
+1. [Architecture](#architecture)
+1. [Overview](#overview)
+1. [Important Notes](#important-notes)
+
+## Architecture
 
 <p align="center">
 <img src="../docs/_static/architecture/platform-architecture.drawio.png" />
 </p>
 
-## Features
+## Overview
 
-* Prometheus monitoring system to collect metrics for all kubernetes pods and nodes;
-* Grafana for metrics visualization and graphs;
-* MinIO Object storage to store data from lots of sources including data from pipelines;
-* Airflow and required resources to manage the pipelines;
+### Monitoring Stack (Grafana, Loki and Prometheus)
+
+To achieve a better observability all the resources of the platform are monitored via
+Prometheus + Loki + Grafana Stack. The role of **Prometheus** is to centralize all the metrics generated for each
+tool (and also cluster resources) if the metrics are available. The same idea is implemented by
+**Grafana Loki** but instead of metrics it collects logs, this is useful for a more complete overview of
+the state of the platform. Finally, all these metrics and logs can be visualized on **Grafana** for people
+to be able to take action. Is also on Grafana that alerts are managed based on the received information.
+
+<p float="left" align="center">
+  <img src="../docs/_static/screenshots/grafana-cluster-monitoring.png" width="36%" />
+  <img src="../docs/_static/screenshots/grafana-log-monitoring.png" width="49%" />
+</p>
+
+## Operational Data: PostgreSQL
+
+PostgreSQL is used to simulate the operational database that stores the information coming from Yelp page
+for each domain. For simplicity only one instance of postgres will be deployed however each domain data will
+be on its own database. For example, the users data will be only on the user database and so on.
+
+<!-- TODO: Add example image of the databases -->
+
+### Product
+
+## Important Notes
+
+* This project is deployed on a local cluster, for simplicity, the exposed services/
+applications are done via a NodePort instead of other approaches;
+* Also for simplicity, some security measures such as SSL connections, network policies and other cluster
+security measures were not used, if using this project as a base for a production environment it is strongly
+recommended that these measures are followed.
