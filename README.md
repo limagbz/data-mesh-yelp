@@ -63,6 +63,10 @@ microk8s enable hostpath-storage
 > There are many solutions out there to deploy a local cluster (e.g. Minikube, Kind). You can see some
 > examples on [Kubernetes: Install Tools](https://kubernetes.io/docs/tasks/tools/).
 
+It is also required to download the **Yelp Dataset** (photos are not required) and extract it on the `data`
+folder. To download please follow the instruction on
+[Yelp Dataset: Download The Data](https://www.yelp.com/dataset/download)
+
 ## Setup your development environment
 
 This project embed a full-feature developer container for VSCode users containing all the tools, extensions
