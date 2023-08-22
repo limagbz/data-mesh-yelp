@@ -19,7 +19,7 @@ primary:
   persistence:
     enabled: true
     storageClass: hd-hostpath
-    size: 10Gi
+    size: 30Gi
 
 # Features
 diagnosticMode:
@@ -42,13 +42,13 @@ metrics:
 # Security and Access Management
 auth:
   enablePostgresUser: true
-  username: meshuser
+  username: datamesh-user
+  database: operational # NOTE: "In order to enable metrics you need to specify a database"
+  replicationUsername: "" # NOTE: Change this if replication is enabled
   existingSecret: postgres-secrets # pragma: allowlist secret
-  database: operational
   secretKeys:
     adminPasswordKey: admin-password # pragma: allowlist secret
     userPasswordKey: user-password # pragma: allowlist secret
-    replicationPasswordKey: replication-password # pragma: allowlist secret
   usePasswordFiles: true
 ldap:
   enabled: false
