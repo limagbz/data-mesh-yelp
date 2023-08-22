@@ -1,10 +1,10 @@
 # Operational
 
-The purpose of [Yelp Dataset](https://www.yelp.com/dataset) is to be used for research purposes, in order to
-be easy to manipulate some information are already aggregated (e.g. number of stars an user gave in total)
-or transformed in some way. Since this lab is used to simulate all the steps from an operational view to
-analytical as close as possible from a real-world example, the idea of this folder is to prepare the data
-as it is believed that it exists in the real world (giving the available data).
+The purpose of [Yelp Dataset](https://www.yelp.com/dataset) is to be used for research purposes, because of
+that some information are already aggregated (e.g. number of stars) or transformed in some way. To be able to
+simulate all the steps from an operational data to an analytical data product, the objective of this
+folder is to prepare this data in order to be as close as possible from what is believed to exist
+in a real world scenario (giving the available data).
 
 Some important takeways/assumptions:
 
