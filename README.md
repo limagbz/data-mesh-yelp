@@ -22,11 +22,10 @@ to contribute with this project by contacting me with suggestions, tips and ways
 
 ## Logical Architecture
 
-<!-- TODO: Add the path to the products folder -->
 > **Note** </br>
 > Please refer to [Logical Architecture](docs/logical-architecture.md) for details about the diagram. For
 > information about each product (including their canvas and interaction map) refer to their own
-> documentation on [products folder]().
+> documentation on [products folder](/products/).
 
 <p align="center">
 <img src="docs/_static/products/logical-architecture.drawio.png" />
