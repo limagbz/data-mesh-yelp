@@ -94,6 +94,7 @@ about the project.
 * [Data Mesh Architecture](https://www.datamesh-architecture.com/)
 * [Data Mesh Architecture (Tech Stack): dbt and Snowflake](https://www.datamesh-architecture.com/tech-stacks/dbt-snowflake)
 * [Data Mesh Architecture (Tech Stack): MinIO and Trino](https://www.datamesh-architecture.com/tech-stacks/minio-trino)
+* [dbt in a data mesh world](https://www.getdbt.com/coalesce-2021/dbt-in-a-data-mesh-world/)
 * [Data Mesh Principles and Logical Architecture](https://martinfowler.com/articles/data-mesh-principles.html)
 * [MicroK8S](https://microk8s.io/)
 * [Yelp Dataset](https://www.yelp.com/dataset)
