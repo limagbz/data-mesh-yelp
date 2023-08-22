@@ -1,7 +1,8 @@
 # Infrastructure
 
 1. [Architecture](#architecture)
-1. [Overview](#overview)
+1. [Data Platform](#data-platform)
+1. [Other Resources](#other-resources)
 1. [Important Notes](#important-notes)
 
 ## Architecture
@@ -10,7 +11,10 @@
 <img src="../docs/_static/architecture/platform-architecture.drawio.png" />
 </p>
 
-## Overview
+## Data Platform
+
+Below is the description of all the resources deployed for the central self-serve data platform as defined
+in the data mesh architecture. This is, that are managed by an data-platform team and not by the domains.
 
 ### Monitoring Stack (Grafana, Loki and Prometheus)
 
@@ -26,13 +30,25 @@ to be able to take action. Is also on Grafana that alerts are managed based on t
   <img src="../docs/_static/screenshots/grafana-log-monitoring.png" width="49%" />
 </p>
 
-## Operational Data: PostgreSQL
+## Other Resources
+
+Below are the resources used in the lab that are not directly a part of the centralized data platform and
+that are created to support this lab in some way.
+
+### PostgreSQL (Operational Data)
 
 PostgreSQL is used to simulate the operational database that stores the information coming from Yelp page
-for each domain. For simplicity only one instance of postgres will be deployed however each domain data will
-be on its own database. For example, the users data will be only on the user database and so on.
+for each domain. See [operational](../operational/) folder for more information about how the data is
+created into the database.
+
+> **Note** </br>
+> For simplicity (and resource management) only one instance of postgres will be deployed for all domains
+> (with a separated database for each one to achieve isolation). On a real world example this architecture
+> can change since each domain operates their own microservices.
+
 
 <!-- TODO: Add example image of the databases -->
+<!-- TODO: If another use, write here -->
 
 ### Product
 

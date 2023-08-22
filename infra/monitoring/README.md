@@ -185,3 +185,4 @@ prometheus.io/param_<parameter>: # If the metrics endpoint uses parameters then 
 * [Promtail Installation](https://grafana.com/docs/loki/latest/clients/promtail/installation/).
 * [Deploy Grafana on Kubernetes](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/).
 * [Install Grafana Loki with Helm](https://grafana.com/docs/loki/latest/installation/helm/#install-grafana-loki-with-helm).
+* [How to collect and query Kubernetes logs with Grafana Loki, Grafana, and Grafana Agent](https://grafana.com/blog/2023/04/12/how-to-collect-and-query-kubernetes-logs-with-grafana-loki-grafana-and-grafana-agent/)
