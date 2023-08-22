@@ -2,10 +2,14 @@
 name = "data-mesh-yelp"
 version = "0.1.0"
 description = ""
-authors = ["limagbz"]
+authors = ["Gabriel Lima <limagbz@outlook.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.11.3"
+pandas = "2.0.3"
+psycopg2-binary = "2.9.7"
+sqlalchemy = "2.0.19"
+tqdm = "4.66.1"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "3.2.1"
@@ -14,6 +18,12 @@ checkov = "2.3.267"
 yamllint = "1.32.0"
 black = "23.3.0"
 flake8 = "6.0.0"
+
+[tool.poetry.group.dev.dependencies]
+jupyterlab = "4.0.5"
+ipywidgets = "8.1.0"
+jupyterlab-widgets = "3.0.8"
+python-dotenv = "^1.0.0"
 
 [tool.black]
 line-length = 79
