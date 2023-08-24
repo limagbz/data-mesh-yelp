@@ -1,6 +1,10 @@
 operator:
   replicaCount: 1
-  resources: {}
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+      ephemeral-storage: 500Mi
 
 console:
   replicaCount: 1

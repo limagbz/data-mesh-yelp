@@ -3,7 +3,7 @@
 1. [Architecture](#architecture)
 1. [Data Platform](#data-platform)
 1. [Other Resources](#other-resources)
-1. [Important Notes](#important-notes)
+1. [FAQ](#faq)
 
 ## Architecture
 
@@ -30,6 +30,17 @@ to be able to take action. Is also on Grafana that alerts are managed based on t
   <img src="../docs/_static/screenshots/grafana-log-monitoring.png" width="49%" />
 </p>
 
+### Object Storage (MinIO)
+
+To store all the data used in the project a MinIO tenant is deployed. This data will be queried using Trino
+and transformed using dbt.
+
+<!-- TODO: Explain how data is organized, lifecycle policies and configurations when ready.  -->
+<!-- TODO: Add a screenshot when some data is already added  -->
+
+> **Note** </br>
+> MinIO is also used by other applications such as Grafana Loki to store data.
+
 ## Other Resources
 
 Below are the resources used in the lab that are not directly a part of the centralized data platform and
@@ -46,16 +57,30 @@ created into the database.
 > (with a separated database for each one to achieve isolation). On a real world example this architecture
 > can change since each domain operates their own microservices.
 
+<p float="left" align="center">
+  <img src="../docs/_static/screenshots/postgres.png" width="60%" />
+</p>
 
-<!-- TODO: Add example image of the databases -->
-<!-- TODO: If another use, write here -->
+## FAQ
 
-### Product
+### 1. How to access the services?
 
-## Important Notes
+This project was created using a local machine running a Kubernetes Cluster. For simplicity all the relevant
+services are exposed via NodePort (see table below for ports).
 
-* This project is deployed on a local cluster, for simplicity, the exposed services/
-applications are done via a NodePort instead of other approaches;
-* Also for simplicity, some security measures such as SSL connections, network policies and other cluster
-security measures were not used, if using this project as a base for a production environment it is strongly
-recommended that these measures are followed.
+| **Application/Service**        | **Port**  |
+| ------------------------------ | --------- |
+| Prometheus                     | 30100     |
+| Grafana                        | 30110     |
+| Loki Gateway                   | 30120     |
+| PostgreSQL (Primary)           | 30200     |
+| MinIO Operator Console (http)  | 30210     |
+| MinIO Operator Console (https) | 30211     |
+| MinIO Tenant                   | 30212     |
+| MinIO Tenant Console           | 30213     |
+
+### 2. Can I use this infrastructure for a production environment?
+
+Because this is not intended for a production environment, some things were simplified such as security
+measures (e.g. SSL, Network Policies and other cluster security measures), access control (e.g. Ingress).
+For this kind of use it is important that some best practices and recommended measures are followed.

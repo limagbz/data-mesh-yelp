@@ -1,11 +1,16 @@
+# Application Settings
 tenant:
   name: minio-data-tenant
   pools:
     - servers: 3
       volumesPerServer: 2
-      size: 10Gi
+      size: 15Gi
       storageClassName: hd-hostpath
-      annotations: {}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/scheme: http
+        prometheus.io/path: /minio/v2/metrics/cluster
+        prometheus.io/port: "9000"
   configuration:
     name: minio-admin-user
   env:
@@ -15,17 +20,25 @@ tenant:
       value: http://prometheus-server.monitoring.svc.cluster.local
     - name: MINIO_PROMETHEUS_JOB_ID
       value: kubernetes-pods
-    - name: CONSOLE_SECURE_TLS_REDIRECT  # Note: Avoid redirect for TLS when using NodePort
+    - name: CONSOLE_SECURE_TLS_REDIRECT # Note: Avoid redirect for TLS when using NodePort
       value: "false"
-  features:  # https://github.com/minio/operator/blob/master/docs/tenant_crd.adoc#features
+  features: # https://github.com/minio/operator/blob/master/docs/tenant_crd.adoc#features
     bucketDNS: true
-
   prometheusOperator: false
   metrics:
     enabled: true
     port: 9000
-    protocol: https
+    protocol: http
   logging:
     anonymous: true
     json: true
     quiet: true
+  certificate:
+    requestAutoCert: false
+  buckets:
+    - name: loki-chunks
+      objectLock: false
+    - name: loki-ruler
+      objectLock: false
+    - name: loki-admin
+      objectLock: false

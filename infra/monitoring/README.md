@@ -81,6 +81,20 @@ stringData:
     <CONTENT_FROM_HTPASSWRD_FILE>
 ```
 
+You also need to create another secret for it to connect to a Minio Deployment. Don't forget
+to apply the secrets with `kubectl apply`.
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: loki-s3-secret
+  namespace: monitoring
+stringData:
+  S3_LOKI_ACCESS_KEY_ID: <MINIO_ACCESS_KEY_ID>
+  S3_LOKI_SECRET_ACCESS_KEY: <MINIO_SECRET_ACCESS_KEY>
+```
+
 > **Warning** </br>
 > Make sure that you do not add this sensitive information into the repository. If done so, read
 > [Github: Removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository)

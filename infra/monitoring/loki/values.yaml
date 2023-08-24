@@ -26,6 +26,21 @@ loki:
     enabled: false
   storage:
     type: s3
+    bucketNames:
+      chunks: loki-chunks
+      ruler: loki-ruler
+      admin: loki-admin
+    s3:
+      s3: null
+      endpoint: http://minio.storage.svc.cluster.local/
+      region: null
+      insecure: true
+      s3ForcePathStyle: true
+      accessKeyId: ${S3_LOKI_ACCESS_KEY_ID}
+      secretAccessKey: ${S3_LOKI_SECRET_ACCESS_KEY}
+  memberlist:
+    service:
+      publishNotReadyAddresses: true
 
 # NOTE: Loki is deployed in a single binary (or monolithic) mode for this lab purposes, for more intensive
 # deployments other approaches should be useful. See
@@ -44,6 +59,19 @@ singleBinary:
     prometheus.io/scheme: http
     prometheus.io/path: /metrics
     prometheus.io/port: "3100"
+  extraArgs:
+    - -config.expand-env=true
+  extraEnv:
+    - name: S3_LOKI_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: loki-s3-secret
+          key: S3_LOKI_ACCESS_KEY_ID
+    - name: S3_LOKI_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: loki-s3-secret
+          key: S3_LOKI_SECRET_ACCESS_KEY
 write:
   replicas: 0
 read:
@@ -83,9 +111,9 @@ rbac:
   sccEnabled: false
 
 # Storage
-minio: # TODO: Change this to the projects Minio when deployed
-  enabled: true
-  replicas: 1
+minio:
+  enabled: false
+  replicas: 0
 
 # Networking
 ingress:
