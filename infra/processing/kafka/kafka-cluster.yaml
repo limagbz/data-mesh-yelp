@@ -1,0 +1,102 @@
+# NOTE: The config below represents additional configuration for metrics collection using Prometheus.
+# according to the documentation an empty file means that all metrics are exported
+# (https://strimzi.io/docs/operators/latest/configuring#con-common-configuration-prometheus-reference)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-ingestion-cluster-metrics-cm
+  namespace: processing
+data:
+  prometheus-config: ""
+---
+# Kafka Persistent Single-Replica Cluster with Zookeeper
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: kafka-ingestion-cluster
+  namespace: processing
+spec:
+  kafka:
+    version: 3.5.1
+    replicas: 1
+    template:
+      pod:
+        metadata:
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: "9404"
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+      - name: tls
+        port: 9093
+        type: internal
+        tls: true
+        authentication:
+          type: tls
+      - name: external
+        port: 9094
+        type: nodeport
+        tls: false
+        configuration:
+          bootstrap: # Ref: https://strimzi.io/blog/2019/04/23/accessing-kafka-part-2/
+            nodePort: 30300
+    storage:
+      type: jbod
+      volumes:
+        - id: 0
+          type: persistent-claim
+          size: 30Gi
+          deleteClaim: false
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: kafka-ingestion-cluster-metrics-cm
+          key: prometheus-config
+    config:
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      default.replication.factor: 1
+      min.insync.replicas: 1
+
+  # Provides a cluster coordination service, storing and tracking the status of brokers and consumers.
+  # ZooKeeper is also used for controller election
+  # (ref: https://strimzi.io/docs/operators/latest/overview)
+  zookeeper:
+    replicas: 1
+    template:
+      pod:
+        metadata:
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: "9404"
+    storage:
+      type: persistent-claim
+      size: 30Gi
+      deleteClaim: false
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: kafka-ingestion-cluster-metrics-cm
+          key: prometheus-config
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+
+  # Kafka Exporter extracts data for analysis as Prometheus metrics, primarily data relating to offsets,
+  # consumer groups, consumer lag and topics.
+  # (ref: https://strimzi.io/docs/operators/latest/overview)
+  kafkaExporter:
+    template:
+      pod:
+        metadata:
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: "9404"
+    topicRegex: .*
+    groupRegex: .*

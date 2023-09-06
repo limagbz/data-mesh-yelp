@@ -20,6 +20,8 @@ primary:
     enabled: true
     storageClass: hd-hostpath
     size: 30Gi
+  extendedConfiguration: |-
+    wal_level = logical
 
 # Features
 diagnosticMode:
@@ -44,11 +46,12 @@ auth:
   enablePostgresUser: true
   username: datamesh-user
   database: operational # NOTE: "In order to enable metrics you need to specify a database"
-  replicationUsername: "" # NOTE: Change this if replication is enabled
+  # replicationUsername: "replication-user" # NOTE: Change this if replication is enabled
   existingSecret: postgres-secrets # pragma: allowlist secret
   secretKeys:
     adminPasswordKey: admin-password # pragma: allowlist secret
     userPasswordKey: user-password # pragma: allowlist secret
+    # replicationPasswordKey: replication-password
   usePasswordFiles: true
 ldap:
   enabled: false

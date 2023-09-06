@@ -1,0 +1,25 @@
+# Resources
+replicas: 1
+resources:
+  limits: {}
+  requests: {}
+livenessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 30
+readinessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 30
+createGlobalResources: true
+connectBuildTimeoutMs: 300000
+
+# Security
+createAggregateRoles: false
+rbac:
+  create: true
+
+# Network
+generateNetworkPolicy: true
+
+# Metrics and Dashboards
+dashboards:
+  enabled: false

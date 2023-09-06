@@ -194,6 +194,12 @@ prometheus.io/port:   # Scrape the pod on the indicated port instead of the defa
 prometheus.io/param_<parameter>: # If the metrics endpoint uses parameters then you can set any parameter
 ```
 
+### 4. How to deploy Dashboards via JSON file?
+
+For this you need to add the json files representing the dashboards into the folder `grafana/helm/dashboards`.
+Don't forget to also edit the `values.yaml` file to add their paths.
+
+
 ## Further Reading
 
 * [Promtail Installation](https://grafana.com/docs/loki/latest/clients/promtail/installation/).

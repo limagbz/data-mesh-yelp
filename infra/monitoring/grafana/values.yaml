@@ -82,6 +82,22 @@ dashboards:
       gnetId: 15141
       revision: 1
       datasource: Loki
+    # Ref: https://github.com/strimzi/strimzi-kafka-operator/tree/0.36.1/examples/metrics/grafana-dashboards
+    strimzi-kafka-connect:
+      file: dashboards/strimzi-kafka-connect.json
+    # Ref: https://github.com/strimzi/strimzi-kafka-operator/tree/0.36.1/examples/metrics/grafana-dashboards
+    strimzi-kafka-exporter:
+      file: dashboards/strimzi-kafka-exporter.json
+    # Ref: https://github.com/strimzi/strimzi-kafka-operator/tree/0.36.1/examples/metrics/grafana-dashboards
+    strimzi-kafka:
+      file: dashboards/strimzi-kafka.json
+    # Ref: https://github.com/strimzi/strimzi-kafka-operator/tree/0.36.1/examples/metrics/grafana-dashboards
+    strimzi-operators:
+      file: dashboards/strimzi-operators.json
+    # Ref: https://github.com/strimzi/strimzi-kafka-operator/tree/0.36.1/examples/metrics/grafana-dashboards
+    strimzi-zookeeper:
+      file: dashboards/strimzi-zookeeper.json
+
 dashboardsConfigMaps: {}
 
 alerting: {}
