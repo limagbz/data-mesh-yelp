@@ -32,14 +32,62 @@ to be able to take action. Is also on Grafana that alerts are managed based on t
 
 ### Object Storage (MinIO)
 
-To store all the data used in the project a MinIO tenant is deployed. This data will be queried using Trino
-and transformed using dbt.
-
-<!-- TODO: Explain how data is organized, lifecycle policies and configurations when ready.  -->
-<!-- TODO: Add a screenshot when some data is already added  -->
+To store all the data used in the project a **MinIO tenant** is deployed. This data will further be used with
+**Trino** to make queries and **dbt** to transform the data and create other products. Besides storing
+operational/analytical data. MinIO is also used by other applications to store their required information.
+For example, the tenant is used by **Grafana Loki** to store logs.
 
 > **Note** </br>
-> MinIO is also used by other applications such as Grafana Loki to store data.
+> See [MinIO Tenant Values](storage/minio/values-tenant.yaml) on `tenant.bucket` configuration for more
+> information about each bucket such as lifecycles, versioning and other configurations.
+
+<!-- TODO: Add 2 screenshots (Bucket and inside some bucket) a screenshot when some data is already added  -->
+
+#### Data Buckets and Medallion Architecture
+
+Analytical data (including data coming from operational database) are all be stored using a
+**[medallion (or multi-hop) architecture](https://www.databricks.com/glossary/medallion-architecture)**.
+There are 3 layers of data each one defined by it's own bucket.
+
+* **Bronze Layer:** Stores the raw data coming from different sources. For this lab, this means the
+operational data ingested for analytics (and any other raw data) will be there.
+* **Silver Layer:** Store data coming from the Bronze Layer after some cleaning,
+merging, conforming and so on.
+* **Gold Layer:** Stores data from the silver layer that are curated. For this lab, this means that the
+data products will reside inside this bucket.
+
+> **Note** </br>
+> More details about formats, paths and so on, see
+> [Data Ingestion](#data-ingestion-kafka-connect--debezium--hudi-deltastreamer);
+
+### Data Ingestion (Kafka Connect + Debezium + Hudi DeltaStreamer)
+
+Since we are not using an event-driven architecture and we don't want the data platform to access the
+operational data directly from the database, we use the process of Change Data Capture (CDC) to get all the
+data from the operational database to our object storage. This is all done using
+**[Kafka Connect](https://docs.confluent.io/platform/current/connect/index.html)** and the chosen
+[Debezium PostgreSQL Connector](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
+and [Apache Hudi Kafka Connector](https://hudi.apache.org/docs/hoodie_deltastreamer/#kafka-connect-sink). The
+way everything works can be summarized as follow:
+
+1. When an INSERT/UPDATE/DELETE operation occurs on PostgreSQL it is sent to its respective Kafka Topic
+(one for each table) by the PostgreSQL source connector. Other supported operations (i.e. TRUNCATE and
+MESSAGE events will not be supported in this lab);
+2. When data arrive at the topics the Apache Hudi sink connector reads the information and send it to the
+bronze area (by using Trino Catalog) on Apache Hudi format.
+
+The choice for having Apache Hudi format from the start (raw data) is besides its well known features such as
+ACID transactions, time travel and so on, we can hard delete and do schema evolution. This is very important
+for example, when conforming to laws where data needs to be deleted (e.g. GDPR).
+
+> **Note** </br>
+> For more details about how the events are written in the topics by the Postgres Connector see
+> [Debezium Postgres Connector: data change events](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-events)
+> and
+> [Debezium: New Record State Extraction](https://debezium.io/documentation/reference/stable/transformations/event-flattening.html).
+
+<!-- TODO: Add example on how the data arrives at MinIO (Debezium - Unwrap) -->
+<!-- TODO: Explain signal tables if required for the case of missing data, errors or storage saving by sending old data to another storage and mantaining the last snapshot -->
 
 ## Other Resources
 
@@ -78,6 +126,12 @@ services are exposed via NodePort (see table below for ports).
 | MinIO Operator Console (https) | 30211     |
 | MinIO Tenant                   | 30212     |
 | MinIO Tenant Console           | 30213     |
+| Kafka Cluster                  | 30300     |
+| MicroK8S Container Registry*   | 32000     |
+
+> **Note** </br>
+> MicroK8S Container Registry is available for those who deploy the cluster using MicroK8S. See your local
+> kubernetes tool for configuration of your container Registry
 
 ### 2. Can I use this infrastructure for a production environment?
 

@@ -56,6 +56,8 @@ microk8s enable dns
 microk8s enable helm
 microk8s enable helm3
 microk8s enable hostpath-storage
+microk8s enable rbac
+microk8s enable registry
 ```
 
 > **Note** </br>
@@ -97,3 +99,4 @@ about the project.
 * [Data Mesh Principles and Logical Architecture](https://martinfowler.com/articles/data-mesh-principles.html)
 * [MicroK8S](https://microk8s.io/)
 * [Yelp Dataset](https://www.yelp.com/dataset)
+* [Medallion Architecture](https://www.databricks.com/glossary/medallion-architecture)
