@@ -7,6 +7,9 @@ ARG KUBECTX_VERSION=0.9.4
 ARG KUBENS_VERSION=0.9.4
 ARG K9S_VERSION=0.27.4
 ARG HELM_VERSION=3.12.0
+ARG TRINO_CLI_VERSION=426
+ARG MINIO_CLI_VERSION=20230916010147.0.0
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Copy custom scripts and set the required permissions
@@ -14,7 +17,7 @@ COPY custom-scripts/ /tmp/scripts/
 RUN chmod +x /tmp/scripts/*
 
 # Required packages
-RUN apt update && apt install -y git curl ca-certificates curl gnupg lsb-release locales locales-all nano apache2-utils postgresql
+RUN apt update && apt install -y git curl ca-certificates curl gnupg lsb-release locales locales-all nano apache2-utils postgresql default-jre jq wget
 
 # Setting Locales
 ENV LC_ALL en_US.UTF-8
@@ -64,3 +67,13 @@ RUN unset PYENV_VERSION && pyenv exec pip install poetry==${POETRY_VERSION}
 # Install Helm
 RUN curl -fSsL -o /tmp/helm.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz \
     && cd /tmp && tar -xvzf /tmp/helm.tar.gz linux-amd64/helm && mv linux-amd64/helm /usr/local/bin/
+
+# Install Trino CLI
+RUN curl -fSsL -o /tmp/trino https://repo1.maven.org/maven2/io/trino/trino-cli/${TRINO_CLI_VERSION}/trino-cli-${TRINO_CLI_VERSION}-executable.jar \
+    && mv /tmp/trino /bin/trino \
+    && chmod +x /bin/trino
+
+# Install Minio Cli
+RUN wget -O /tmp/mc https://dl.min.io/client/mc/release/linux-amd64/mc \
+    && mv /tmp/mc /bin/mc \
+    && chmod +x /bin/mc
