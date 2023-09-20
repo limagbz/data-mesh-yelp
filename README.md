@@ -22,7 +22,7 @@ to contribute with this project by contacting me with suggestions, tips and ways
 
 ## Logical Architecture
 
-> **Note** </br>
+> [!NOTE]
 > Please refer to [Logical Architecture](docs/logical-architecture.md) for details about the diagram. For
 > information about each product (including their canvas and interaction map) refer to their own
 > documentation on [products folder](/products/).
@@ -33,7 +33,7 @@ to contribute with this project by contacting me with suggestions, tips and ways
 
 ## Platform Architecture
 
-> **Note** </br>
+> [!NOTE]
 > This architecture (and the diagram) is heavily based on the tech stacks found
 > [here](https://www.datamesh-architecture.com/#tech-stacks), more precisely this a mix of both
 > [Datamesh Architecture: MinIO and Trino](https://www.datamesh-architecture.com/tech-stacks/minio-trino) and
@@ -60,7 +60,7 @@ microk8s enable rbac
 microk8s enable registry
 ```
 
-> **Note** </br>
+> [!NOTE]
 > There are many solutions out there to deploy a local cluster (e.g. Minikube, Kind). You can see some
 > examples on [Kubernetes: Install Tools](https://kubernetes.io/docs/tasks/tools/).
 
@@ -83,7 +83,7 @@ Since this is a lab project currently I am the only person developing the code. 
 new features/improvements, ask questions, suggest tips and etc on the  **discussion** tab. For bug reports
 use the **issues** tab (with the bug template).
 
-> **Note** </br>
+> [!NOTE]
 > Please, read the [CONTRIBUTING Guide](CONTRIBUTING.md) for more details about styleguides, best practices
 > and conventions followed by the project.
 
@@ -100,3 +100,4 @@ about the project.
 * [MicroK8S](https://microk8s.io/)
 * [Yelp Dataset](https://www.yelp.com/dataset)
 * [Medallion Architecture](https://www.databricks.com/glossary/medallion-architecture)
+* [Building Data Lakes on AWS with Kafka Connect, Debezium, Apicurio Registry, and Apache Hudi](https://programmaticponderings.com/2023/02/28/building-data-lakes-on-aws-with-kafka-connect-debezium-apicurio-registry-and-apache-hudi/)
