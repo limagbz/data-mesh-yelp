@@ -33,7 +33,7 @@ users. This range from registration, friends, compliments and other user related
 * **Business:** Manage business information such as location, attributes, categories and related information.
 Note that reviews, checkins and tips besides being very close to business they are in fact a relationship
 between users and business, so they have their own domains to handle.
-* **Evaluation:** Handle all types of evaluations from an user to a business (i.e. reviews and tips). This
+* **Evaluations:** Handle all types of evaluations from an user to a business (i.e. reviews and tips). This
 is the only domain with multiple entities because of their similarities. According to Yelp, tips are
 "a way to pass along some key information about a business [...] without writing a full review about your
 experiences.". In fact, small reviews are converted automatically to tips in the platform.
