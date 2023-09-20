@@ -1,3 +1,6 @@
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO user_owners_group;
+CREATE PUBLICATION debezium FOR ALL TABLES;
+
 CREATE TABLE IF NOT EXISTS users (
    id VARCHAR(22) PRIMARY KEY,
    name VARCHAR NOT NULL,
@@ -10,7 +13,7 @@ CREATE TABLE IF NOT EXISTS elite_members (
 );
 
 CREATE TABLE IF NOT EXISTS friends (
-    previous_user VARCHAR(22) REFERENCES users(id),
-    next_user VARCHAR(22) REFERENCES users(id),
-    PRIMARY KEY(previous_user, next_user)
+   previous_user VARCHAR(22) REFERENCES users(id),
+   next_user VARCHAR(22) REFERENCES users(id),
+   PRIMARY KEY(previous_user, next_user)
 );

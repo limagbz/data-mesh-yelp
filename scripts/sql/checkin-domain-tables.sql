@@ -1,0 +1,9 @@
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO checkin_owners_group;
+CREATE PUBLICATION debezium FOR ALL TABLES;
+
+CREATE TABLE IF NOT EXISTS checkins (
+   id VARCHAR(22) PRIMARY KEY,
+   business_id VARCHAR(22) NOT NULL,
+   user_id VARCHAR(22) NOT NULL,
+   checkin_date TIMESTAMP NOT NULL
+);
