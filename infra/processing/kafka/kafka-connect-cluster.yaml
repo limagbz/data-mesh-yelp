@@ -1,0 +1,84 @@
+---
+# Kafka Connect is an integration toolkit for streaming data between Kafka brokers and other systems using
+# Connector plugins. Kafka Connect provides a framework for integrating Kafka with an external data source or
+# target, such as a database, for import or export of data using connectors.
+# (ref: https://strimzi.io/docs/operators/latest/overview)
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: ingestion-cluster
+  namespace: processing
+  annotations:
+    # Enables KafkaConnectors to create, delete, and reconfigure connectors
+    strimzi.io/use-connector-resources: "true"
+spec:
+  version: 3.5.1
+  replicas: 1
+  bootstrapServers: ingestion-cluster-kafka-bootstrap:9092
+  config:
+    # These following values (group.id, offset.storage.topic, config.storage.topic, status.storage.topic)
+    # should be unique for works for each Kafka Connect
+    group.id: ingestion-cluster
+    offset.storage.topic: ingestion-cluster-offsets
+    config.storage.topic: ingestion-cluster-configs
+    status.storage.topic: ingestion-cluster-status
+    # Get configurations from Secrets, this is useful
+    config.providers: secrets
+    config.providers.secrets.class: io.strimzi.kafka.KubernetesSecretConfigProvider
+    # -1 means it will use the default replication factor configured in the broker
+    config.storage.replication.factor: -1
+    offset.storage.replication.factor: -1
+    status.storage.replication.factor: -1
+  build:
+    # This section creates the required docker image with the defined connector plugins and push this to a
+    # private container registry. For new kind of connectors the plugins should be added here.
+    output:
+      type: docker
+      image: 10.152.183.90:5000/ingestion-cluster:latest
+    plugins:
+      # Ref: https://debezium.io/documentation/reference/stable/connectors/postgresql.html
+      - name: debezium-postgres-source-connector
+        artifacts:
+          - type: tgz
+            url: https://repo1.maven.org/maven2/io/debezium/debezium-connector-postgres/2.3.2.Final/debezium-connector-postgres-2.3.2.Final-plugin.tar.gz
+      # Ref: https://docs.confluent.io/kafka-connectors/s3-sink/current/overview.html
+      - name: confluent-s3-sink-connector
+        artifacts:
+          - type: zip
+            url: https://d1i4a15mxbxib1.cloudfront.net/api/plugins/confluentinc/kafka-connect-s3/versions/10.5.4/confluentinc-kafka-connect-s3-10.5.4.zip
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ingestion-cluster-read-secrets-role
+  namespace: processing
+rules:
+  - apiGroups: [""]
+    resources:
+      - secrets
+    resourceNames:
+      - kafka-connect-business-postgresql-user
+      - kafka-connect-business-minio-user
+      - kafka-connect-checkin-postgresql-user
+      - kafka-connect-checkin-minio-user
+      - kafka-connect-evaluations-postgresql-user
+      - kafka-connect-evaluations-minio-user
+      - kafka-connect-user-postgresql-user
+      - kafka-connect-user-minio-user
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ingestion-cluster-read-secrets-role-binding
+  namespace: processing
+subjects:
+  - kind: ServiceAccount
+    name: ingestion-cluster-connect
+    namespace: processing
+roleRef:
+  kind: Role
+  name: ingestion-cluster-read-secrets-role
+  apiGroup: rbac.authorization.k8s.io
+---

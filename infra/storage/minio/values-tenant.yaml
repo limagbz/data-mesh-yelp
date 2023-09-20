@@ -3,7 +3,7 @@ tenant:
   name: minio-data-tenant
   pools:
     - servers: 3
-      volumesPerServer: 2
+      volumesPerServer: 2 # NOTE: "Pools with 3 servers needs to have at least 6 Volumes"
       size: 15Gi
       storageClassName: hd-hostpath
       annotations:
@@ -36,9 +36,19 @@ tenant:
   certificate:
     requestAutoCert: false
   buckets:
+    # Required for Grafana Loki
     - name: loki-chunks
       objectLock: false
     - name: loki-ruler
       objectLock: false
     - name: loki-admin
+      objectLock: false
+    # Domain Buckets
+    - name: domain-business
+      objectLock: false
+    - name: domain-checkin
+      objectLock: false
+    - name: domain-evaluations
+      objectLock: false
+    - name: domain-user
       objectLock: false

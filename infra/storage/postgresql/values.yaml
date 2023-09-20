@@ -20,7 +20,8 @@ primary:
     enabled: true
     storageClass: hd-hostpath
     size: 30Gi
-  extendedConfiguration: |-
+  extendedConfiguration: |- # pragma: allowlist secret
+    password_encryption = scram-sha-256
     wal_level = logical
 
 # Features
@@ -44,21 +45,17 @@ metrics:
 # Security and Access Management
 auth:
   enablePostgresUser: true
-  username: datamesh-user
-  database: operational # NOTE: "In order to enable metrics you need to specify a database"
-  # replicationUsername: "replication-user" # NOTE: Change this if replication is enabled
+  database: postgres # NOTE: Using the same default database just to enable metrics (required to exists)
   existingSecret: postgres-secrets # pragma: allowlist secret
   secretKeys:
     adminPasswordKey: admin-password # pragma: allowlist secret
-    userPasswordKey: user-password # pragma: allowlist secret
-    # replicationPasswordKey: replication-password
   usePasswordFiles: true
 ldap:
   enabled: false
 tls:
   enabled: false
 volumePermissions:
-  enabled: false
+  enabled: true
 serviceBindings:
   enabled: false
 serviceAccount:

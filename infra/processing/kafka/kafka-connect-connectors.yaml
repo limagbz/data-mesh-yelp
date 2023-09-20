@@ -1,0 +1,257 @@
+# yamllint disable rule:line-length
+---
+##############################################################################################################
+# Business
+##############################################################################################################
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: business-domain-postgres-source-connector
+  namespace: processing
+  labels:
+    strimzi.io/cluster: ingestion-cluster
+spec:
+  class: io.debezium.connector.postgresql.PostgresConnector
+  tasksMax: 1
+  config:
+    tasks.max: 1
+    snapshot.mode: initial
+    slot.name: domain_business
+    topic.prefix: domain_business
+    plugin.name: pgoutput
+    database.dbname: domain_business
+    database.hostname: postgresql.storage.svc.cluster.local
+    database.port: 5432
+    database.user: ${secrets:processing/kafka-connect-business-postgresql-user:username} # pragma: allowlist secret
+    database.password: ${secrets:processing/kafka-connect-business-postgresql-user:password} # pragma: allowlist secret
+    publication.name: debezium
+    transforms: unwrap
+    transforms.unwrap.type: io.debezium.transforms.ExtractNewRecordState
+    transforms.unwrap.drop.tombstones: "true"
+    transforms.unwrap.delete.handling.mode: rewrite
+    transforms.unwrap.add.fields.prefix: __debezium_
+    transforms.unwrap.add.fields: name,op,db,table,source.ts_ms,txId,lsn,schema
+    signal.enabled.channels: source
+    signal.data.collection: public.debezium_signal
+    table.exclude.list: public.debezium_signal
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: business-domain-s3-sink-connector
+  namespace: processing
+  labels:
+    strimzi.io/cluster: ingestion-cluster
+spec:
+  class: io.confluent.connect.s3.S3SinkConnector
+  tasksMax: 1
+  config:
+    tasks.max: 1
+    flush.size: 1000
+    format.class: io.confluent.connect.s3.format.avro.AvroFormat
+    partitioner.class: io.confluent.connect.storage.partitioner.DailyPartitioner
+    locale: en-US
+    timezone: UTC
+    timestamp.extractor: Wallclock
+    schema.compatibility": NONE
+    schema.generator.class: io.confluent.connect.storage.hive.schema.DefaultSchemaGenerator
+    topics.regex: domain_business.(.*)
+    topics.dir: bronze/operational
+    storage.class: io.confluent.connect.s3.storage.S3Storage
+    s3.region: us-east-1 # Default Region
+    s3.bucket.name: domain-business
+    store.url: http://minio.storage.svc.cluster.local:80
+    aws.secret.access.key: ${secrets:processing/kafka-connect-business-minio-user:password} # pragma: allowlist secret
+    aws.access.key.id: ${secrets:processing/kafka-connect-business-minio-user:username} # pragma: allowlist secret
+---
+##############################################################################################################
+# checkin
+##############################################################################################################
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: checkin-domain-postgres-source-connector
+  namespace: processing
+  labels:
+    strimzi.io/cluster: ingestion-cluster
+spec:
+  class: io.debezium.connector.postgresql.PostgresConnector
+  tasksMax: 1
+  config:
+    tasks.max: 1
+    snapshot.mode: initial
+    slot.name: domain_checkin
+    topic.prefix: domain_checkin
+    plugin.name: pgoutput
+    database.dbname: domain_checkin
+    database.hostname: postgresql.storage.svc.cluster.local
+    database.port: 5432
+    database.user: ${secrets:processing/kafka-connect-checkin-postgresql-user:username} # pragma: allowlist secret
+    database.password: ${secrets:processing/kafka-connect-checkin-postgresql-user:password} # pragma: allowlist secret
+    publication.name: debezium
+    transforms: unwrap
+    transforms.unwrap.type: io.debezium.transforms.ExtractNewRecordState
+    transforms.unwrap.drop.tombstones: "true"
+    transforms.unwrap.delete.handling.mode: rewrite
+    transforms.unwrap.add.fields.prefix: __debezium_
+    transforms.unwrap.add.fields: name,op,db,table,source.ts_ms,txId,lsn,schema
+    signal.enabled.channels: source
+    signal.data.collection: public.debezium_signal
+    table.exclude.list: public.debezium_signal
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: checkin-domain-s3-sink-connector
+  namespace: processing
+  labels:
+    strimzi.io/cluster: ingestion-cluster
+spec:
+  class: io.confluent.connect.s3.S3SinkConnector
+  tasksMax: 1
+  config:
+    tasks.max: 1
+    flush.size: 1000
+    format.class: io.confluent.connect.s3.format.avro.AvroFormat
+    partitioner.class: io.confluent.connect.storage.partitioner.DailyPartitioner
+    locale: en-US
+    timezone: UTC
+    timestamp.extractor: Wallclock
+    schema.compatibility": NONE
+    schema.generator.class: io.confluent.connect.storage.hive.schema.DefaultSchemaGenerator
+    topics.regex: domain_checkin.(.*)
+    topics.dir: bronze/operational
+    storage.class: io.confluent.connect.s3.storage.S3Storage
+    s3.region: us-east-1 # Default Region
+    s3.bucket.name: domain-checkin
+    store.url: http://minio.storage.svc.cluster.local:80
+    aws.secret.access.key: ${secrets:processing/kafka-connect-checkin-minio-user:password} # pragma: allowlist secret
+    aws.access.key.id: ${secrets:processing/kafka-connect-checkin-minio-user:username} # pragma: allowlist secret
+---
+##############################################################################################################
+# evaluations
+##############################################################################################################
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: evaluations-domain-postgres-source-connector
+  namespace: processing
+  labels:
+    strimzi.io/cluster: ingestion-cluster
+spec:
+  class: io.debezium.connector.postgresql.PostgresConnector
+  tasksMax: 1
+  config:
+    tasks.max: 1
+    snapshot.mode: initial
+    slot.name: domain_evaluations
+    topic.prefix: domain_evaluations
+    plugin.name: pgoutput
+    database.dbname: domain_evaluations
+    database.hostname: postgresql.storage.svc.cluster.local
+    database.port: 5432
+    database.user: ${secrets:processing/kafka-connect-evaluations-postgresql-user:username} # pragma: allowlist secret
+    database.password: ${secrets:processing/kafka-connect-evaluations-postgresql-user:password} # pragma: allowlist secret
+    publication.name: debezium
+    transforms: unwrap
+    transforms.unwrap.type: io.debezium.transforms.ExtractNewRecordState
+    transforms.unwrap.drop.tombstones: "true"
+    transforms.unwrap.delete.handling.mode: rewrite
+    transforms.unwrap.add.fields.prefix: __debezium_
+    transforms.unwrap.add.fields: name,op,db,table,source.ts_ms,txId,lsn,schema
+    signal.enabled.channels: source
+    signal.data.collection: public.debezium_signal
+    table.exclude.list: public.debezium_signal
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: evaluations-domain-s3-sink-connector
+  namespace: processing
+  labels:
+    strimzi.io/cluster: ingestion-cluster
+spec:
+  class: io.confluent.connect.s3.S3SinkConnector
+  tasksMax: 1
+  config:
+    tasks.max: 1
+    flush.size: 1000
+    format.class: io.confluent.connect.s3.format.avro.AvroFormat
+    partitioner.class: io.confluent.connect.storage.partitioner.DailyPartitioner
+    locale: en-US
+    timezone: UTC
+    timestamp.extractor: Wallclock
+    schema.compatibility": NONE
+    schema.generator.class: io.confluent.connect.storage.hive.schema.DefaultSchemaGenerator
+    topics.regex: domain_evaluations.(.*)
+    topics.dir: bronze/operational
+    storage.class: io.confluent.connect.s3.storage.S3Storage
+    s3.region: us-east-1 # Default Region
+    s3.bucket.name: domain-evaluations
+    store.url: http://minio.storage.svc.cluster.local:80
+    aws.secret.access.key: ${secrets:processing/kafka-connect-evaluations-minio-user:password} # pragma: allowlist secret
+    aws.access.key.id: ${secrets:processing/kafka-connect-evaluations-minio-user:username} # pragma: allowlist secret
+---
+##############################################################################################################
+# user
+##############################################################################################################
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: user-domain-postgres-source-connector
+  namespace: processing
+  labels:
+    strimzi.io/cluster: ingestion-cluster
+spec:
+  class: io.debezium.connector.postgresql.PostgresConnector
+  tasksMax: 1
+  config:
+    tasks.max: 1
+    snapshot.mode: initial
+    slot.name: domain_user
+    topic.prefix: domain_user
+    plugin.name: pgoutput
+    database.dbname: domain_user
+    database.hostname: postgresql.storage.svc.cluster.local
+    database.port: 5432
+    database.user: ${secrets:processing/kafka-connect-user-postgresql-user:username} # pragma: allowlist secret
+    database.password: ${secrets:processing/kafka-connect-user-postgresql-user:password} # pragma: allowlist secret
+    publication.name: debezium
+    transforms: unwrap
+    transforms.unwrap.type: io.debezium.transforms.ExtractNewRecordState
+    transforms.unwrap.drop.tombstones: "true"
+    transforms.unwrap.delete.handling.mode: rewrite
+    transforms.unwrap.add.fields.prefix: __debezium_
+    transforms.unwrap.add.fields: name,op,db,table,source.ts_ms,txId,lsn,schema
+    signal.enabled.channels: source
+    signal.data.collection: public.debezium_signal
+    table.exclude.list: public.debezium_signal
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: user-domain-s3-sink-connector
+  namespace: processing
+  labels:
+    strimzi.io/cluster: ingestion-cluster
+spec:
+  class: io.confluent.connect.s3.S3SinkConnector
+  tasksMax: 1
+  config:
+    tasks.max: 1
+    flush.size: 1000
+    format.class: io.confluent.connect.s3.format.avro.AvroFormat
+    partitioner.class: io.confluent.connect.storage.partitioner.DailyPartitioner
+    locale: en-US
+    timezone: UTC
+    timestamp.extractor: Wallclock
+    schema.compatibility": NONE
+    schema.generator.class: io.confluent.connect.storage.hive.schema.DefaultSchemaGenerator
+    topics.regex: domain_user.(.*)
+    topics.dir: bronze/operational
+    storage.class: io.confluent.connect.s3.storage.S3Storage
+    s3.region: us-east-1 # Default Region
+    s3.bucket.name: domain-user
+    store.url: http://minio.storage.svc.cluster.local:80
+    aws.secret.access.key: ${secrets:processing/kafka-connect-user-minio-user:password} # pragma: allowlist secret
+    aws.access.key.id: ${secrets:processing/kafka-connect-user-minio-user:username} # pragma: allowlist secret
