@@ -1,15 +1,15 @@
 # Monitoring
 
 1. [Overview](#overview)
-1. [Step-by-Step Deployment](#step-by-step-deployment)
+1. [Deployment Guide](#deployment-guide)
 1. [FAQ](#faq)
 1. [Further Reading](#further-reading)
 
 ## Overview
 
 This namespace contains all the required resources for monitoring the cluster and its resources. This
-includes: [Promtail](https://grafana.com/docs/loki/latest/clients/promtail/) is an agent that is deployed in
-every machine that needs to be monitored (on this project, as a Daemon Set) and is used to discover and send
+includes: [Promtail](https://grafana.com/docs/loki/latest/clients/promtail/) an agent deployed in
+every machine (Daemon Set) that needs to be monitored and is used to discover and send
 logs from these machines to a Loki Instance. [Grafana Loki](https://grafana.com/docs/loki/latest/) is them
 used to manage and centralize all the logs from the cluster. We also have
 [Prometheus](https://prometheus.io/docs/introduction/overview/) that centralize all metrics exported
@@ -17,26 +17,13 @@ by pods, nodes and other resources for the cluster. Finally is
 [Grafana](https://grafana.com/docs/grafana/latest/) used in  this project to visualize all this collected
 information (i.e. logs and metrics) in useful dashboards and manage alerts.
 
-> **Note** </br>
-> It is common on this kind of monitoring stack to use [Blackbox exporter](https://github.com/prometheus/blackbox_exporter)
-> for probing metrics on endpoints. For simplicity this is currently not deployed.
+## Deployment Guide
 
-## Step-by-Step Deployment
+> [!WARNING]
+> Before deploying any resource on this folder, please create the namespace by running:
+> `kubectl apply -f infra/monitoring/namespace.yaml`
 
-> **Note** </br>
-> This project uses specific versions for the charts and applications. All the versions of these
-> applications and helm charts are contained into the `Chart.yaml` files in each `/helm` folder for each
-> resource.
-
-### 1. Create the namespace
-
-All the resources above will be deployed in a single namespace. This can be done by running:
-
-```shell
-kubectl apply -f infra/monitoring/namespace.yaml
-```
-
-### 2. Deploy Prometheus
+### Prometheus
 
 Prometheus is deployed using [Prometheus Helm Chart](https://github.com/prometheus-community/helm-charts/tree/prometheus-22.6.4/charts/prometheus)
 from [Prometheus Community](https://github.com/prometheus-community). This chart have many features including
@@ -48,22 +35,20 @@ details on what this project uses.
 helm install -f infra/monitoring/prometheus/values.yaml prometheus infra/monitoring/prometheus/helm -n monitoring
 ```
 
-### 3. Deploy Grafana Loki
+### Grafana Loki
 
 Loki is also deployed using an official Helm chart. The
 [Loki helm chart by Grafana](https://artifacthub.io/packages/helm/grafana/loki) also contains many features,
-see [`loki/values.yaml`](loki/values.yaml) for details on what this project uses.
+see [`loki/values.yaml`](loki/values.yaml) for details on what this project uses. To deploy this chart,
+first you need to create the credentials for the gateway that manages the connection to Loki. This can be
+done by running the command below, replacing the value `<LOKI_GATEWAY_USER>` with the wanted username.
 
-To deploy this chart, first it is required that you create the credentials for the gateway that manages the
-connection to Loki. This can be done by running the command below, replacing the value `<LOKI_GATEWAY_USER>`
-with the wanted username.
-
-> **Note** </br>
+> [!NOTE]
 > See [NGINX: Restricting Access with HTTP Basic Authentication](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/#creating-a-password-file)
 > for more information
 
 ```shell
-htpasswd .htpasswd <LOKI_GATEWAY_USER> -c
+htpasswd -c .htpasswd <LOKI_GATEWAY_USER>
 ```
 
 The command above will ask for a password. A file `.htpasswd` will be generated on the folder that you
@@ -81,7 +66,7 @@ stringData:
     <CONTENT_FROM_HTPASSWRD_FILE>
 ```
 
-You also need to create another secret for it to connect to a Minio Deployment. Don't forget
+You also need to create another secret for Loki to connect to a Minio tenant as described below. Don't forget
 to apply the secrets with `kubectl apply`.
 
 ```yaml
@@ -95,24 +80,20 @@ stringData:
   S3_LOKI_SECRET_ACCESS_KEY: <MINIO_SECRET_ACCESS_KEY>
 ```
 
-> **Warning** </br>
-> Make sure that you do not add this sensitive information into the repository. If done so, read
-> [Github: Removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository)
-
 After that, just deploy Loki by running the helm command below:
 
 ```shell
 helm install -f infra/monitoring/loki/values.yaml loki infra/monitoring/loki/helm -n monitoring
 ```
 
-### 4. Deploy Promtail
+### Promtail
 
 Promtail is deployed using the official
 [Promtail Helm Chart by Grafana](https://artifacthub.io/packages/helm/grafana/promtail). To be able to
 connect with Loki using the gateway first create a secret with the original password (not the htpasswd one).
 Don't forget to apply the secrets with `kubectl apply`:
 
-> **Warning** </br>
+> [!WARNING]
 > The secret below will also be used for Grafana deployment
 
 ```yaml
@@ -131,11 +112,10 @@ Now that everything is setup, just run the command below to deploy promtail
 helm install -f infra/monitoring/promtail/values.yaml promtail infra/monitoring/promtail/helm -n monitoring
 ```
 
-### 5. Deploy Grafana
+### Grafana
 
 Grafana is deployed by using the official Grafana Helm Chart. You can find more information about the chart
 on [Deploy Grafana on Kubernetes](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/).
-
 To deploy the chart contained in this repo, first you need to create the admin user and password by
 configuring a secret as described below, replacing the values  `<GRAFANA_USER>` and `<GRAFANA_PASSWORD>` with
 your own values. Don't forget to apply the secrets with `kubectl apply`.
@@ -151,10 +131,6 @@ stringData:
   admin-password: <GRAFANA_PASSWORD>
 ```
 
-> **Warning** </br>
-> Make sure that you do not add this sensitive information into the repository. If done so, read
-> [Github: Removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository)
-
 After that, just deploy Grafana by running the helm command below:
 
 ```shell
@@ -168,7 +144,7 @@ helm install -f infra/monitoring/grafana/values.yaml grafana infra/monitoring/gr
 Yes and No. To scrape metrics for Prometheus it is required that you add at least the
 `prometheus.io/scrape: "true"` annotation in the pods/service-endpoints that have prometheus-compatible
 metrics (see other questions in this FAQ for more details). For logs, promtail is deployed as a Daemon Set
-that collects every machine that needs to be monitored. So it doesn't require an specific configuration
+that collects every machine that needs to be monitored. So it doesn't require an specific configuration.
 
 ### 2. How to scrape metrics from pods using Prometheus?
 
@@ -198,7 +174,6 @@ prometheus.io/param_<parameter>: # If the metrics endpoint uses parameters then 
 
 For this you need to add the json files representing the dashboards into the folder `grafana/helm/dashboards`.
 Don't forget to also edit the `values.yaml` file to add their paths.
-
 
 ## Further Reading
 
