@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hive-metastore
+  namespace: processing
+  labels:
+    app.kubernetes.io/name: hive-metastore
+    app.kubernetes.io/instance: hive-metastore
+spec:
+  serviceName: hive-metastore
+  replicas: 1
+  selector:
+    matchLabels:
+      name: hive-metastore
+  template:
+    metadata:
+      labels:
+        name: hive-metastore
+    spec:
+      containers:
+        - name: hive
+          image: apache/hive:3.1.3
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9083
+          env:
+            - name: SERVICE_NAME
+              value: metastore
+            - name: DB_DRIVER
+              value: postgres
+            - name: HIVE_CUSTOM_CONF_DIR
+              value: /etc/config/hive_custom_conf/
+            # NOTE: This should be 'false' on the first deployment of the Metastore for Hive to be able
+            # to create all the tables on PostgreSQL and other required initialization steps
+            - name: IS_RESUME
+              value: "true"
+          volumeMounts:
+            - name: hive-custom-config
+              mountPath: /etc/config/hive_custom_conf/
+              readOnly: true
+            - name: warehouse
+              mountPath: /opt/hive/data/warehouse
+      volumes:
+        - name: hive-custom-config
+          secret:
+            secretName: hive-db-secret # pragma: allowlist secret
+  volumeClaimTemplates:
+    - metadata:
+        name: warehouse
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: hd-hostpath
+        resources:
+          requests:
+            storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hive-metastore
+  labels:
+    app.kubernetes.io/name: hive-metastore
+    app.kubernetes.io/instance: hive-metastore
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: hive-metastore
+    app.kubernetes.io/instance: hive-metastore
+  ports:
+    - port: 9083
+      targetPort: 9083
+      nodePort: 30320
