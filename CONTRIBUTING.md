@@ -30,6 +30,10 @@ references for their styleguides:
 - **YAML:** YAML files follow the rules found on [yamlint configuration](.yamllint) and are evaluated
 automatically. See [yamlint: rules](https://yamllint.readthedocs.io/en/stable/rules.html) for description for
 each rule used by the project.
+- **Python:** For python we follow [PEP8](https://peps.python.org/pep-0008/) and
+[PEP257](https://peps.python.org/pep-0257/). For docstrings and comments we follow the
+[Google's Comments and Docstrings](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
+convention.
 
 ## Best Practices
 
