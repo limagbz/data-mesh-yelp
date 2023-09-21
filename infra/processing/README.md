@@ -154,7 +154,7 @@ stringData:
 
 Before advancing to deployment it is important to get the internal IP address of a container registry that will
 be used to create the image with the connector plugins. This is required because the Kafka Connect deployment
-creates a custom image with the code required for each Connector that we are going to use and uplods it to a
+creates a custom image with the code required for each Connector that we are going to use and uploads it to a
 container registry. To get this IP address you should consult the documentation of your cluster solution.
 
 Assuming a CR deployed into a `container-registry` namespace and with a service name `registry`. In fact this

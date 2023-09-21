@@ -39,7 +39,8 @@ operational database for each domain. For simplicity (and resource optimization)
 only one instance of PostgreSQL for all the domains (with a database for each one).
 
 > [!IMPORTANT]
-> For more information about how the operational data is populated for each domain, go to
+> For more information about how the operational data is populated for each domain, you can see the table
+> definitions on [scripts/sql](../scripts/sql/) folder and how the data is inserted on
 > [Notebook: Generate Operational Data](../scripts/generate-operational-data.ipynb).
 
 <p float="left" align="center">
@@ -91,9 +92,10 @@ The flow of data can be summarized as follows:
 1. When an INSERT/UPDATE/DELETE operation occurs on PostgreSQL the data is sent to its respective Kafka Topic
 (one for each table) by the PostgreSQL source connector. Other supported operations (i.e. TRUNCATE and
 MESSAGE events will not be used in this lab);
-2. When data arrive at the topics the S3 Sink Connector reads the information and send it to the
+1. When data arrive at the topics the S3 Sink Connector reads the information and send it to the
 bronze area for each bucket (i.e. domain) on Avro Format partitioned by day.
-<!-- TODO: Explain the next transformation -->
+
+<!-- TODO: Add image examples: (1) Kafka Topics, (2) Data written on Minio -->
 
 > [!NOTE]
 > For more details about how the events are written in the topics by the Postgres Connector see
@@ -105,14 +107,70 @@ In case a ad-hoc snapshot needs to be done. We also deployed Debezium with signa
 understand more about this on
 [How can I create a ad-hoc snapshot of a table?](processing/README.md#1-how-can-i-create-a-ad-hoc-snapshot-of-a-table)
 
-<!-- TODO: Explain what can be done if data needs to be deleted GDPR -->
-<!-- TODO: ### Distributed Query Engine (Trino + Hive Metastore) -->
+> [!IMPORTANT]
+> For more information about how the operational data is populated for each domain, you can see the table
+> definitions on [scripts/sql](../scripts/sql/) folder and how the data is inserted on
+> [Notebook: Generate Operational Data](../scripts/generate-operational-data.ipynb).
+
+### Bronze to Silver Layer (Spark + Hudi DeltaStream)
+
+The nature of the data coming from the operational database is currently a set of events that shows the
+changes in the data in Avro Format. In order to enable ACID Transactions, time travel, schema evolution,
+rollbacks and other features the idea is to convert this to Apache Hudi format using
+[Apache Hudi DeltaStreamer](https://hudi.apache.org/docs/hoodie_deltastreamer/) that running on Spark. These
+files will be further queried using Trino and used on dbt. This means that the flow of data is:
+
+1. Data arrives on Bronze Area from the Data Ingestion phase;
+1. Delta Stream reads new data and send to silver layer in Hudi Format.
+
+<!-- TODO: Add image examples: (1) Spark Jobs, (2) Data in Hudi Format -->
+
+### Data Products (Trino + dbt)
+
+With all the data setup in MinIO we need tools to transform data into products. These functions will be made
+by [dbt-core](https://docs.getdbt.com/docs/introduction) and [Trino](https://trino.io/docs/current/). The
+function of Trino is to create a query engine for all the data that we stored into MinIO, this engine
+will be used by dbt to transform this data into products. All these products data will be stored in the
+**gold** area of each domain.
+
+<!-- TODO: Add image examples: (1) dbt working, (2) Example product, (3) Trino query, (4) Trino Dashboard -->
+
+### Data Contract (dbt tests + DataHub + LakeFS)
+
+To establish a trustful, actionable and easy to find data we are going to use some tools to define the
+data contract for the products. For those not familiar with the concept you can read
+[Data Mesh Manager: What is a Data Contract?](https://www.datamesh-manager.com/learn/what-is-a-data-contract).
+
+There is no trustful data without testing. For this purpose we are going to use
+[dbt tests](https://docs.getdbt.com/docs/build/tests) and
+[dbt_expectations](https://hub.getdbt.com/calogica/dbt_expectations/latest/) a extension package for dbt
+inspired by [Great Expectations](https://docs.greatexpectations.io/docs/) for more complex tests.
+
+To maintain lineage and a fully searchable and documented data and products the tool is the
+[DataHub](https://datahubproject.io/docs/). This tool enables data users to search for catalogs, understand
+the data and metadata, see the lineage for each product, define access policies and many other features.
+
+Finally, [LakeFS](https://docs.lakefs.io/) will be used to version and access data. Creating a safer
+environment for store, manipulate and access data.
+
+<!-- TODO: Add image examples: (1) DataHub Catalog, (2) Data Hub Lineage, (3) LakeFS datasets -->
+
+### Analytics (Metabase)
+
+To create data visualization products the chosen tool was [Metabase](https://www.metabase.com/docs/latest/).
+The tools can be used to create dashboards from data coming from Trino. This dashboards will be also present
+in DataHub catalog for data users to be able to find easily.
+
+<!-- TODO: Add image examples: (1) DataHub Catalog with Metabase, (2) Example dashboard -->
+
 ## FAQ
 
 ### 1. How to access the services?
 
 This project was created using a local machine running a Kubernetes Cluster. For simplicity all the relevant
 services are exposed via NodePort (see table below for ports).
+
+<!-- TODO: Add new services below-->
 
 | **Application/Service**        | **Port**  |  **Notes**                  |
 | ------------------------------ | --------- | --------------------------- |
