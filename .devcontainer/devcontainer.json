@@ -19,7 +19,6 @@
         "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind,consistency=default"
     ],
     "postStartCommand": "/bin/bash /tmp/scripts/poststart.sh",
-    "postCreateCommand": "/bin/bash /tmp/scripts/postcreate.sh",
     "customizations": {
         "vscode": {
             "extensions": [

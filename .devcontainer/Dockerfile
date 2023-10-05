@@ -17,7 +17,9 @@ COPY custom-scripts/ /tmp/scripts/
 RUN chmod +x /tmp/scripts/*
 
 # Required packages
-RUN apt update && apt install -y git curl ca-certificates curl gnupg lsb-release locales locales-all nano apache2-utils postgresql default-jre jq wget
+RUN apt update && apt install -y git curl ca-certificates curl gnupg \
+    lsb-release locales locales-all nano apache2-utils postgresql \
+    default-jre jq wget
 
 # Setting Locales
 ENV LC_ALL en_US.UTF-8
