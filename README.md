@@ -1,4 +1,4 @@
-# Data Mesh Project
+# [DEPRECATED] Data Mesh Project
 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
 
